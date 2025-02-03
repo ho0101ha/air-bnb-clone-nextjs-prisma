@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"  // SQLite を使用
+  url      = env("DATABASE_URL")  // .env で設定する
+}
+
+model Accommodation {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  location    String
+  locationJP  String
+  imageUrl    String
+  createdAt   DateTime @default(now())
+   reservations Reservation[]
+   reviews   Review[]
+   favorite  Favorite[]
+}
+
+
+model Reservation {
+  id              Int      @id @default(autoincrement())
+  accommodationId Int
+  accommodation   Accommodation @relation(fields: [accommodationId], references: [id])
+  people          Int
+  startDate       DateTime
+  endDate         DateTime
+  name            String
+  email           String
+  createdAt       DateTime @default(now())
+}
+model User {
+   id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+ password  String   // ハッシュ化されたパスワードを保存
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   Review[]
+  favorite  Favorite[]
+   message  Message[]
+}
+
+
+model Review {
+  id              Int      @id @default(autoincrement())
+  content         String
+  rating          Int
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id])
+  accommodationId Int
+  accommodation   Accommodation @relation(fields: [accommodationId], references: [id])
+  createdAt       DateTime @default(now())
+}
+
+model Favorite {
+  id              Int            @id @default(autoincrement())
+  userId          Int
+  user            User           @relation(fields: [userId], references: [id])
+  accommodationId Int
+  accommodation   Accommodation  @relation(fields: [accommodationId], references: [id])
+  createdAt       DateTime       @default(now())
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
