@@ -1,10 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.reservation.deleteMany();  // 予約データを削除
+  await prisma.favorite.deleteMany();     // お気に入りデータを削除
+  await prisma.review.deleteMany();       // レビューデータを削除
   await prisma.accommodation.deleteMany();
-  
   await prisma.accommodation.createMany({
     data: [
       {
@@ -13,7 +15,7 @@ async function main() {
         price: 12000,
         location: 'Tokyo',
         locationJP: '東京',
-        imageUrl: '/images/tokyo-apartment.jpg',
+        imageUrl: '/images/tokyo-hotel.jpg',
       },
       {
         name: '京都の伝統的な町家',
@@ -21,7 +23,7 @@ async function main() {
         price: 15000,
         location: 'Kyoto',
         locationJP: '京都',
-        imageUrl: '/images/kyoto-house.jpg',
+        imageUrl: '/images/kyoto-ryokan.jpg',
       },
       {
         name: '大阪のモダンなフラット',
@@ -37,7 +39,7 @@ async function main() {
         price: 10000,
         location: 'Okinawa',
         locationJP: '沖縄',
-        imageUrl: '/images/okinawa-flat.jpg',
+        imageUrl: '/images/okinawa-sea.jpg',
       },
       {
         name: '北海道の雪景色が美しい宿',
@@ -45,7 +47,7 @@ async function main() {
         price: 10000,
         location: 'Hokkaido',
         locationJP: '北海道',
-        imageUrl: '/images/hokkaido-flat.jpg',
+        imageUrl: '/images/hokkaido-cotage.jpg',
       },
     ],
   });
