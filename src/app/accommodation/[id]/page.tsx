@@ -11,7 +11,9 @@ const prisma = new PrismaClient();
 export default async function AccommodationPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string
+
+   };
 }) {
   // サーバーセッションを取得
   const session = await getServerSession(authOptions);

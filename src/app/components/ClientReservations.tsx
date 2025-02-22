@@ -74,7 +74,7 @@ export default function ClientReservations({reservations}:{reservations:Reservat
     
     return(
         <div>
-        {reservations.length === 0 ? <p>予約がございません</p>:
+        {reservations.length === 0 ? <p className='text-center mb-4'>予約がございません</p>:
         (
         <div className={`${reservationList.length ===1 ? "flex justify-center" :"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}  w-full  mb-5`}>{reservationList.map((reservation) =>
         <div key={reservation.id} className="cursor-pointer border rounded-lg p-4 shadow-md hover:shadow-lg">

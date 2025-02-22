@@ -10,8 +10,7 @@ export  default async function ReservationsPage() {
     const session = await getServerSession(authOptions);
     if(!session?.user){
         return<div>
-            <p>ログインして下さい</p>
-            <Link href={"/"}>トップへ戻る</Link>
+            <p className='text-center'>ログインして下さい</p>
             </div>
             }
     const reservations = await prisma.reservation.findMany({

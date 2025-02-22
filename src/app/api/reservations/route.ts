@@ -46,3 +46,20 @@ export async function POST(request: NextRequest) {
   
   }
 }
+
+
+export async function PUT(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  const { id, people, startDate, endDate } = await req.json();
+
+  const reservation = await prisma.reservation.update({
+    where: { id },
+    data: { people, startDate, endDate },
+  });
+
+  return NextResponse.json(reservation);
+}

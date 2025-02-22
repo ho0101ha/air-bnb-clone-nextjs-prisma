@@ -10,6 +10,6 @@ export async function GET() {
     // return new Response(JSON.stringify(accommodations), { status: 200 });
     return NextResponse.json(accommodations);
   } catch (error) {
-    return new Response('accommodation接続に失敗', { status: 500 });
+    return NextResponse.json('accommodation接続に失敗', { status: 500 });
   }
 }

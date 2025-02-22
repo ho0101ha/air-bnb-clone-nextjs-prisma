@@ -9,15 +9,6 @@ import LoginLogoutButton from './components/LoginLogoutButton';
 
 const prisma = new PrismaClient();
 
-// interface Accommodation {
-//   id: number;
-//   name: string;
-//   description: string;
-//   price: number;
-//   location: string;
-//   locationJP: string;
-//   imageUrl: string;
-// }
 
 export default async function AccommodationPage() {
   const accommodations = await prisma.accommodation.findMany();

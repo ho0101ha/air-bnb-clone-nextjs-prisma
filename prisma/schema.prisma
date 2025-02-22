@@ -3,59 +3,61 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"  // SQLite を使用
-  url      = env("DATABASE_URL")  // .env で設定する
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model Accommodation {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  price       Float
-  location    String
-  locationJP  String
-  imageUrl    String
-  createdAt   DateTime @default(now())
-   reservations Reservation[]
-   reviews   Review[]
-   favorite  Favorite[]
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String
+  price        Float
+  location     String
+  locationJP   String
+  imageUrl     String
+  createdAt    DateTime      @default(now())
+  reservations  Reservation[]
+  reviews      Review[]
+  favorite     Favorite[]
+  property     Property?     @relation("AccommodationProperty")
 }
 
-
 model Reservation {
-  id              Int      @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   accommodationId Int
-  accommodation   Accommodation @relation(fields: [accommodationId], references: [id])
+  accommodation   Accommodation  @relation(fields: [accommodationId], references: [id])
   people          Int
   startDate       DateTime
   endDate         DateTime
   name            String
   email           String
-  createdAt       DateTime @default(now())
+  createdAt       DateTime       @default(now())
 }
+
 model User {
-   id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
-  email     String   @unique
- password  String   // ハッシュ化されたパスワードを保存
+  email     String     @unique
+  password  String     // ハッシュ化されたパスワードを保存
   image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   reviews   Review[]
   favorite  Favorite[]
-   message  Message[]
+  message   Message[]
+  role      Role       @default(USER)
+  properties Property[]
 }
 
-
 model Review {
-  id              Int      @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   content         String
   rating          Int
   userId          Int
-  user            User     @relation(fields: [userId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
   accommodationId Int
-  accommodation   Accommodation @relation(fields: [accommodationId], references: [id])
-  createdAt       DateTime @default(now())
+  accommodation   Accommodation  @relation(fields: [accommodationId], references: [id])
+  createdAt       DateTime       @default(now())
 }
 
 model Favorite {
@@ -73,4 +75,20 @@ model Message {
   user      User     @relation(fields: [userId], references: [id])
   content   String
   createdAt DateTime @default(now())
+}
+
+model Property {
+  id              String        @id @default(uuid())
+  name            String
+  location        String
+  ownerId         Int
+  owner           User           @relation(fields: [ownerId], references: [id])
+  accommodationId Int?            @unique  
+  accommodation   Accommodation? @relation("AccommodationProperty", fields: [accommodationId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+  HOST
 }

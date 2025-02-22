@@ -1,40 +1,11 @@
-// import bcrypt from "bcrypt";
-// import { PrismaClient } from "@prisma/client";
-// import { NextResponse } from "next/server";
-// const prisma = new PrismaClient();
-
-// export async function POST(request: Request) {
-//   try {
-//     const { name, email, password } = await request.json();
-
-//     if (!name || !email || !password) {
-//       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-//     }
-
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     const user = await prisma.user.create({
-//       data: {
-//         name,
-//         email,
-//         password:hashedPassword,
-// // 修正：コロンで正しく接続
-//       },
-//     });
-
-//     return NextResponse.json(user);
-//   } catch (error) {
-//     console.error('Error creating user:', error);
-//     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// }
-
 
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { getSession } from "next-auth/react";
+
+import { error } from "console";
+import { getSessionUser } from "@/app/utils/getSessionUser";
 
 const prisma = new PrismaClient();
 
@@ -70,7 +41,8 @@ export async function POST(request: Request) {
       data: {
         name,
         email,
-        password: hashedPassword, // Prismaスキーマのpasswordフィールドに保存
+        password: hashedPassword, 
+        role:Role.USER,// Prismaスキーマのpasswordフィールドに保存
       },
     });
 
@@ -84,4 +56,27 @@ export async function POST(request: Request) {
   } finally {
     await prisma.$disconnect();
   }
+}
+
+// **全ユーザー取得（GET）**
+
+export async function GET() {
+  const user =  await getSessionUser();
+  if(!user || user.role  !==  Role.ADMIN){
+    return NextResponse.json({error:"権限がありません"},{status:403});
+  }
+  const users = prisma.user.findMany({
+    select:{id:true,name:true,email:true,role:true},
+  });
+  return NextResponse.json(users);
+  
+}
+
+export async function DELETE(id:number) {
+  const user =  await getSessionUser();
+  if(!user || user.role  !==  Role.ADMIN){
+    return NextResponse.json({error:"権限がありません"},{status:403});
+  }
+   prisma.user.delete({where:{id}});
+   return NextResponse.json
 }
