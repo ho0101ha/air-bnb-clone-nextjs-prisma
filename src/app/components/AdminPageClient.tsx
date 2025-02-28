@@ -37,20 +37,18 @@ export default function AdminPageClient({ users, accommodations, reservations }:
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // 削除用の関数
-  const handleDelete = async (id: number, type: "user" | "accommodation" | "reservation") => {
+  // APIエンドポイントを定数化
+  const API_ENDPOINTS = {
+    user: "/api/admin/user",
+    accommodation: "/api/admin/accommodation",
+    reservation: "/api/admin/reservation",
+  };
+
+  // データ削除
+  const handleDelete = async (id: number, type: keyof typeof API_ENDPOINTS) => {
     setLoading(true);
     try {
-      let url = "";
-      if (type === "user") {
-        url = "/api/admin/user";
-      } else if (type === "accommodation") {
-        url = "/api/admin/accommodation";
-      } else if (type === "reservation") {
-        url = "/api/admin/reservation";
-      }
-
-      await axios.delete(url, { data: { id } });
+      await axios.delete(API_ENDPOINTS[type], { data: { id } });
       alert(`${type} を削除しました`);
       router.refresh();
     } catch (error) {
@@ -61,11 +59,11 @@ export default function AdminPageClient({ users, accommodations, reservations }:
     }
   };
 
-  // ユーザーの役割変更用の関数
+  // ユーザーの役割更新
   const handleUpdateUserRole = async (id: number, role: "USER" | "HOST") => {
     setLoading(true);
     try {
-      await axios.patch("/api/admin/user", { id, role });
+      await axios.patch(API_ENDPOINTS.user, { id, role });
       alert(`ユーザーの権限を ${role} に変更しました`);
       router.refresh();
     } catch (error) {
@@ -76,15 +74,22 @@ export default function AdminPageClient({ users, accommodations, reservations }:
     }
   };
 
-  // 予約の更新用の関数（チェックイン・チェックアウトの日付変更）
-  const handleUpdateReservation = async (id: number, checkIn: string, checkOut: string) => {
+  // 予約の更新（チェックイン・チェックアウトの日付変更）
+  const handleUpdateReservation = async (id: number, startDate: string, endDate: string) => {
     setLoading(true);
     try {
-      // API 側のパラメーター名に合わせて startDate, endDate を送信する
-      await axios.patch("/api/admin/reservation", { id, startDate: checkIn, endDate: checkOut });
+      // 送信するデータを確認
+      console.log("Updating reservation:", { id, startDate, endDate });
+
+      // 日付をISO形式に変換
+      const updatedStartDate = new Date(startDate).toISOString();
+      const updatedEndDate = new Date(endDate).toISOString();
+
+      await axios.patch(API_ENDPOINTS.reservation, { id, startDate: updatedStartDate, endDate: updatedEndDate });
       alert("予約を更新しました");
       router.refresh();
     } catch (error) {
+      // エラーメッセージを詳しく表示
       alert("更新に失敗しました");
       console.error(error);
     } finally {
@@ -115,23 +120,13 @@ export default function AdminPageClient({ users, accommodations, reservations }:
                 <td className="p-2">{user.email}</td>
                 <td className="p-2">{user.role}</td>
                 <td className="p-2 flex gap-2">
-                  {user.role === "HOST" ? (
-                    <button
-                      onClick={() => handleUpdateUserRole(user.id, "USER")}
-                      disabled={loading}
-                      className="bg-blue-500 text-white p-1 rounded"
-                    >
-                      USER に変更
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleUpdateUserRole(user.id, "HOST")}
-                      disabled={loading}
-                      className="bg-green-500 text-white p-1 rounded"
-                    >
-                      HOST に変更
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleUpdateUserRole(user.id, user.role === "HOST" ? "USER" : "HOST")}
+                    disabled={loading}
+                    className="bg-blue-500 text-white p-1 rounded"
+                  >
+                    {user.role === "HOST" ? "USER に変更" : "HOST に変更"}
+                  </button>
                   <button
                     onClick={() => handleDelete(user.id, "user")}
                     disabled={loading}
@@ -200,28 +195,16 @@ export default function AdminPageClient({ users, accommodations, reservations }:
                 <td className="p-2">
                   <input
                     type="date"
-                    defaultValue={new Date(res.startDate).toISOString().substring(0, 10)}
-                    onChange={(e) =>
-                      handleUpdateReservation(
-                        res.id,
-                        e.target.value,
-                        new Date(res.endDate).toISOString().substring(0, 10)
-                      )
-                    }
+                    value={res.startDate.split("T")[0]}
+                    onChange={(e) => handleUpdateReservation(res.id, e.target.value, res.endDate)}
                     className="border p-1"
                   />
                 </td>
                 <td className="p-2">
                   <input
                     type="date"
-                    defaultValue={new Date(res.endDate).toISOString().substring(0, 10)}
-                    onChange={(e) =>
-                      handleUpdateReservation(
-                        res.id,
-                        new Date(res.startDate).toISOString().substring(0, 10),
-                        e.target.value
-                      )
-                    }
+                    value={res.endDate.split("T")[0]}
+                    onChange={(e) => handleUpdateReservation(res.id, res.startDate, e.target.value)}
                     className="border p-1"
                   />
                 </td>

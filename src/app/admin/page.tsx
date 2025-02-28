@@ -9,7 +9,7 @@ export default async function AdminPage() {
   const sessionUser = await getSessionUser();
   // 作成者のメールアドレス（例）
   // const appCreatorEmail = "springwa04@gmail.com";
-  const appCreatorEmail = process.env.APPCREATOREMAil;
+  const appCreatorEmail = process.env.APPCREATOREMAIL;
 
   // ユーザーが存在しない、または、ADMIN でもなく、かつ作成者でもない場合はリダイレクト
   if (!sessionUser || (sessionUser.role !== "ADMIN" && sessionUser.email !== appCreatorEmail)) {

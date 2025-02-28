@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function DELETE(req:NextRequest) {
     const user = await getSessionUser();
     // const appCreatorEmail = "springwa04@gmail.com";
-    const appCreatorEmail = process.env.APPCREATOREMAil;
+    const appCreatorEmail = process.env.APPCREATOREMAIL;
     if(!user || (user?.role === "ADMIN" && user.email !== appCreatorEmail)){
         return NextResponse.json({error:"権限がありません"},{status:403});
     }
