@@ -39,13 +39,17 @@ export default async function AdminPage() {
     startDate: r.startDate.toISOString(),
     endDate: r.endDate.toISOString(),
   }));
-
+  const hostRequests = await prisma.hostRequest.findMany({
+    select: { id: true, userId: true, user: { select: { name: true, email: true } }, status: true },
+  });
+  
   return (
     <>
       <AdminPageClient
       users={users}
       accommodations={accommodations}
       reservations={reservations}
+      hostRequests={hostRequests} 
     />
     <Link href="/">戻る</Link>
     </>

@@ -6,6 +6,8 @@ import { authOptions } from './api/auth/[...nextauth]/route';
 import UserMenue from './components/UserMenue';
 // import { signIn, signOut } from 'next-auth/react';
 import LoginLogoutButton from './components/LoginLogoutButton';
+import HostRequestButton from './components/HostRequestButton';
+import { getSessionUser } from './utils/getSessionUser';
 
 const prisma = new PrismaClient();
 
@@ -25,14 +27,15 @@ export default async function AccommodationPage() {
       select: { accommodationId: true },
     })
   : [];
-
+  const sessionUser = await getSessionUser();
 const favoriteIds = favorites.map((fav) => fav.accommodationId);
   return (
     <div className="container mx-auto p-4">
       <header className="py-4 flex justify-between">
         <div>logo</div>
-        <div>
-         <LoginLogoutButton isLoggedIn={!!session}/>
+        <div >
+          <div className='mb-3'><LoginLogoutButton isLoggedIn={!!session}/></div>
+          <div>{ sessionUser?.role ==="USER"  &&  <HostRequestButton />}</div>
         </div>
       </header>
       <main>

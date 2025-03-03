@@ -47,8 +47,17 @@ model User {
   message   Message[]
   role      Role       @default(USER)
   properties Property[]
+  hostRequests  HostRequest[]
 }
 
+
+model HostRequest {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    String   @default("PENDING") // "PENDING", "APPROVED", "REJECTED"
+  createdAt DateTime @default(now())
+}
 model Review {
   id              Int            @id @default(autoincrement())
   content         String
