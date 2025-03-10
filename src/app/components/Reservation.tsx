@@ -5,30 +5,37 @@ import Confirm from "./Confirm";
 
 
 
+
 interface ReservationProps {
   accommodation: {
+    price:number;
     id: number;
     name: string;
   };
-  people?: number; // 必要ならオプショナルにする
+  people?: number;
+  user: {
+    name: string;
+    email: string;
+  } | null;
 }
 
-export default function Reservation({ accommodation }: ReservationProps) {
+export default function Reservation({ accommodation,user }: ReservationProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirm,setConfirm] = useState(false);
-  const [name, setName] = useState("");
+  // const [user,setUser] = useState<{ name: string; email: string } | null>(null)
+  // const [name, setName] = useState("");
   const [people, setPeople] = useState(1);
-  const [email, setEmail] = useState("");
+  // const [email, setEmail] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  
+ 
   const handleReservation = async () => {
     try {
       await axios.post("/api/reservations", {
         accommodationId: Number(accommodation.id),
-        name,
+        name:user?.name,
         people:Number(people),
-        email,
+        email:user?.email,
         startDate,
         endDate,
       });
@@ -37,7 +44,7 @@ export default function Reservation({ accommodation }: ReservationProps) {
       })
       alert("予約が完了しました！");
       
-      setIsModalOpen(false); // モーダルを閉じる
+      setIsModalOpen(false);
       window.location.href = "/";
     } catch (error) {
       console.error(error);
@@ -59,7 +66,7 @@ export default function Reservation({ accommodation }: ReservationProps) {
             <h2 className="text-xl font-bold mb-4">予約フォーム</h2>
             <p>{accommodation.name}</p>
             <form className="space-y-4">
-              <div>
+              {/* <div>
                 <label className="block">氏名</label>
                 <input
                   type="text"
@@ -67,7 +74,7 @@ export default function Reservation({ accommodation }: ReservationProps) {
                   onChange={(e) => setName(e.target.value)}
                   className="border p-2 rounded w-full"
                 />
-              </div>
+              </div> */}
               <div>
                 <label className="block">人数</label>
                 <input
@@ -77,7 +84,7 @@ export default function Reservation({ accommodation }: ReservationProps) {
                   className="border p-2 rounded w-full"
                 />
               </div>
-              <div>
+              {/* <div>
                 <label className="block">メールアドレス</label>
                 <input
                   type="email"
@@ -85,7 +92,7 @@ export default function Reservation({ accommodation }: ReservationProps) {
                   onChange={(e) => setEmail(e.target.value)}
                   className="border p-2 rounded w-full"
                 />
-              </div>
+              </div> */}
               <div>
                 <label className="block">チェックイン</label>
                 <input
@@ -123,16 +130,20 @@ export default function Reservation({ accommodation }: ReservationProps) {
         </div>
       )}
 
-      {confirm && <Confirm
-      accommodationName={accommodation.name}
-      name={name}
-      people={people}
-      email={email}
-      startDate={startDate}
-      endDate={endDate}
-       handleCancel={()=>setConfirm(false)}
-      handleReservation={handleReservation}
-      />}
+      {confirm &&
+     <Confirm
+     accommodationId={accommodation.id}  
+     accommodationName={accommodation.name}
+     price={accommodation.price}
+     name={user?.name ?? ""}
+     people={people}
+     email={user?.email ?? ""}
+     startDate={startDate}
+     endDate={endDate}
+     handleCancel={() => setConfirm(false)}
+     handleReservation={handleReservation}
+   />
+      }
     </div>
   );
 }

@@ -14,7 +14,7 @@ export  default async function ReservationsPage() {
             </div>
             }
     const reservations = await prisma.reservation.findMany({
-      where: { email: session.user.email }, // ここでエラーが出ている可能性
+      where: { email: session.user.email }, 
       include: { accommodation: true },
       orderBy: { startDate: "desc" },
     });
@@ -22,6 +22,7 @@ export  default async function ReservationsPage() {
       ...reservation,
       startDate: reservation.startDate.toISOString(),
       endDate: reservation.endDate.toISOString(),
+      paid:reservation.paid,
     }));
 
   return (

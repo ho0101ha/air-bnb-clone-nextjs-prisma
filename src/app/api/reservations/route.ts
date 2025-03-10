@@ -4,19 +4,39 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
-export async function GET(req:NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const reservations = await prisma.reservation.findMany();
-    
-    // return new Response(JSON.stringify(accommodations), { status: 200 });
+    const reservations = await prisma.reservation.findMany({
+      include: { accommodation: true }, // 宿泊施設の情報を含める
+    });
+
     return NextResponse.json(reservations);
-    
   } catch (error) {
-    return new Response('reservations接続に失敗', { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch reservations" }, { status: 500 });
   }
 }
+// export async function GET(req: NextRequest) {
+//   try {
+//     const session = await getServerSession(authOptions);
+//     if (!session) {
+//       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+//     }
 
-
+//     const reservations = await prisma.reservation.findMany({
+//       where: { 
+//         email: session.user.email,
+//         // 🔹 ここで paid の条件を削除（すべての予約を取得）
+//       }, 
+//       include: { accommodation: true },
+//       orderBy: { startDate: "desc" },
+//     });
+//     console.log("取得した予約:", reservations); // デバッグ用
+//     return NextResponse.json(reservations);
+//   } catch (error) {
+//     console.error("Error fetching reservations:", error);
+//     return new Response('reservations接続に失敗', { status: 500 });
+//   }
+// }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -27,7 +47,6 @@ export async function POST(request: NextRequest) {
     if (!accommodationId || !name || !people || !email || !startDate || !endDate) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-
     const reservation = await prisma.reservation.create({
       data: {
         accommodationId: Number(accommodationId),
@@ -36,9 +55,10 @@ export async function POST(request: NextRequest) {
         email,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
+        paid: false,  // 
       },
     });
-
+    console.log("予約データ保存成功:",reservation.id);
     return NextResponse.json(reservation);
   } catch (error) {
     console.error('Error creating reservation:', error);

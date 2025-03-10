@@ -32,6 +32,8 @@ model Reservation {
   name            String
   email           String
   createdAt       DateTime       @default(now())
+  paid            Boolean        @default(false)
+  
 }
 
 model User {

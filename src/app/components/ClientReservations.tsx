@@ -4,7 +4,9 @@ import Link from 'next/link';
 import React, { useState } from 'react'
 import Reservation from './Reservation';
 import axios from 'axios';
-const prisma = new PrismaClient
+import { loadStripe } from '@stripe/stripe-js';
+const prisma = new PrismaClient;
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface Reservation {
     id: number;
@@ -16,7 +18,8 @@ interface Reservation {
     };
     people: number;
     startDate: string; // `Date` → `string`
-    endDate: string; // `Date` → `string`
+    endDate: string; 
+    paid:boolean;// `Date` → `string`
   }
 export default function ClientReservations({reservations}:{reservations:Reservation[]}) {
     const [reservationList,setReservationList] = useState(reservations);
@@ -71,13 +74,35 @@ export default function ClientReservations({reservations}:{reservations:Reservat
           console.error("予約削除エラー:", error);
         }
       };
+      const handlePayment = async(reservation:Reservation) =>{
+        try {
+          const {data} = await axios.post("/api/checkout",{
+            accommodationName:reservation.accommodation.name,
+            price:reservation.accommodation.price,
+            reservationId:reservation.id,
+          });
+          const stripe = await stripePromise;
+          if (!stripe) throw new Error("Stripe の初期化に失敗しました");
+          // 2. Stripe の決済ページにリダイレクト
+          const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+          if (error) throw new Error(error.message);
+          // window.location.href = data.url;
+        } catch (error) {
+          console.error("支払いエラー",error);
+          alert('支払いエラーが発生しました');
+        }
+   
+      }
     
     return(
         <div>
         {reservations.length === 0 ? <p className='text-center mb-4'>予約がございません</p>:
         (
-        <div className={`${reservationList.length ===1 ? "flex justify-center" :"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}  w-full  mb-5`}>{reservationList.map((reservation) =>
-        <div key={reservation.id} className="cursor-pointer border rounded-lg p-4 shadow-md hover:shadow-lg">
+        <div className={`${reservationList.length ===1 ? "flex justify-center" :
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}  w-full  mb-5`}>
+          {reservationList.map((reservation) =>
+        <div key={reservation.id} className="cursor-pointer border rounded-lg p-4 shadow-md 
+        hover:shadow-lg">
           <h3 className='mb-3 text-xl'>{reservation.accommodation.name}</h3>
           <img src={reservation.accommodation.imageUrl} alt={reservation.accommodation.name} 
           className="w-full h-48 object-cover rounded-lg mb-4"/>
@@ -111,8 +136,13 @@ export default function ClientReservations({reservations}:{reservations:Reservat
            <div ><p className='mb-3'>チェックイン:{new Date(reservation.startDate).toLocaleDateString()}</p>
            <p className='mb-3'>チェックアウト:{new Date(reservation.endDate).toLocaleDateString()}</p>
            <p className='mb-3'>{reservation.accommodation.price}/泊</p>
+           <p className='mb-3'>支払い状況:{reservation.paid? "支払い済み":"未払い"}</p>
+           {!reservation.paid && (
+            <button onClick={() =>handlePayment(reservation)}>支払う</button>
+           )}
            <button onClick={() =>handleEdit(reservation)}
-            className='block border border-black p-2 mb-3 text-center  rounded-md hover:bg-red-500 hover:text-white '>変更</button>
+            className='block border border-black p-2 mb-3 text-center  rounded-md hover:bg-red-500 hover:text-white '>
+              変更</button>
            </div>
           )}
           

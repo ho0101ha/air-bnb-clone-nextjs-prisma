@@ -47,14 +47,20 @@ export async function PATCH(request:NextRequest,{params}:{params:{id:string}}) {
       return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
     }
     try{
-      const { startDate, endDate, people } = await request.json();
+      const { startDate, endDate, people,paid } = await request.json();
+      const updateData: { startDate?: Date; endDate?: Date; people?: number; paid?: boolean } = {};
+      if (startDate) updateData.startDate = new Date(startDate);
+    if (endDate) updateData.endDate = new Date(endDate);
+    if (people) updateData.people = Number(people);
+    if (paid !== undefined) updateData.paid = paid;
       const updatedReservation = await prisma.reservation.update({
         where: { id: Number(params.id) },
-        data: {
-          startDate: new Date(startDate),
-          endDate: new Date(endDate),
-          people: Number(people),
-        },
+            data:updateData,
+      //   data: {
+      //     startDate: new Date(startDate),
+      //     endDate: new Date(endDate),
+      //     people: Number(people),
+      //   },
       });
      return NextResponse.json(updatedReservation);
     }catch (error) {

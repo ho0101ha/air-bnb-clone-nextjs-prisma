@@ -5,7 +5,12 @@ import Reservation from "@/app/components/Reservation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ReviewForm from "@/app/components/ReviewForm";
-
+import { getSessionUser } from "@/app/utils/getSessionUser";
+// type SessionUser ={
+//   name:string;
+//   id:number;
+//   emmail:string
+// }
 const prisma = new PrismaClient();
 
 export default async function AccommodationPage({
@@ -15,8 +20,11 @@ export default async function AccommodationPage({
 
    };
 }) {
-  // サーバーセッションを取得
+  const sessionUser = await getSessionUser();
   const session = await getServerSession(authOptions);
+  const user = sessionUser ? { name: sessionUser.name, email: sessionUser.email } : null;
+  // サーバーセッションを取得
+ 
 
   // 宿泊施設情報を取得
   const accommodation = await prisma.accommodation.findUnique({
@@ -55,7 +63,7 @@ export default async function AccommodationPage({
         ))}
 
         {/* 予約コンポーネント */}
-        <Reservation accommodation={accommodation} />
+        <Reservation accommodation={accommodation} user={user}/>
 
         {/* レビュー投稿フォーム */}
         {session?.user && (
