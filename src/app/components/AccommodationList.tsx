@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useState,  } from "react";
 import axios from "axios";
+import LikeButton from "./ LikeButton";
 
 interface Accommodation {
   id: number;
@@ -16,11 +17,15 @@ interface Accommodation {
 interface Props {
   accommodations: Accommodation[];
   initialFavorites: number[];
+  likedAccommodations: number[]; 
+  likesCountMap: Record<number, number>;
 }
 
 export default function AccommodationList({
   accommodations,
   initialFavorites,
+  likedAccommodations,
+  likesCountMap,
 }: Props) {
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<number[]>(initialFavorites);
@@ -37,6 +42,7 @@ export default function AccommodationList({
       console.error("Error fetching favorites:", error);
     }
   };
+  
 
   const toggleFavorite = async (id: number) => {
     try {
@@ -55,7 +61,8 @@ export default function AccommodationList({
   const filteredAccommodations = selectedFilter
     ? accommodations.filter((item) => item.description.includes(selectedFilter))
     : accommodations;
-
+     
+    
   return (
     <div>
       {/* フィルター UI */}
@@ -121,6 +128,12 @@ export default function AccommodationList({
                 {favorites.includes(accommodation.id) ? "⭐" : "☆"}
               </button>
             </div>
+            {/* {いいね} */}
+            <LikeButton
+            accommodationId={accommodation.id}
+            isLiked={likedAccommodations.includes(accommodation.id)}
+            initialCount={likesCountMap[accommodation.id] || 0}
+            />
           </div>
         ))}
       </div>

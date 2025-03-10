@@ -19,6 +19,31 @@ export default async function AccommodationPage() {
 // IDのみの配列に変換
 
   const session = await getServerSession(authOptions);
+
+  
+  let likedAccommodations: number[] = [];
+  let likesCountMap: Record<number, number> = {};
+
+  // ユーザーがいいねした宿泊施設を取得
+  if (session?.user?.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: { like: true },
+    });
+    likedAccommodations = user?.like.map((like) => like.accommodationId) || [];
+  }
+
+  // いいね数を取得
+  const likeCount = await prisma.like.groupBy({
+    by: ["accommodationId"],
+    _count: { accommodationId: true },
+  });
+
+  likeCount.forEach((item) => {
+    likesCountMap[item.accommodationId] = item._count.accommodationId;
+  });
+
+
   const favorites = session
   ? await prisma.favorite.findMany({
       where: {
@@ -44,7 +69,10 @@ const favoriteIds = favorites.map((fav) => fav.accommodationId);
         <div>
           <AccommodationList
             accommodations={accommodations}
-            initialFavorites={favoriteIds} // 初期お気に入りデータを渡す
+            initialFavorites={favoriteIds}
+            likedAccommodations={likedAccommodations}
+            likesCountMap={likesCountMap}
+             // 初期お気に入りデータを渡す
           />
           {session?.user && <UserMenue /> }
         </div>
