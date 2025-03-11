@@ -59,7 +59,9 @@ const favoriteIds = favorites.map((fav) => fav.accommodationId);
       <header className="py-4 flex justify-between">
         <div>logo</div>
         <div >
-          <div className='mb-3'><LoginLogoutButton isLoggedIn={!!session}/></div>
+          <div className='mb-3'>
+            <LoginLogoutButton isLoggedIn={!!session}/>
+            </div>
           <div>{ sessionUser?.role ==="USER"  &&  <HostRequestButton />}</div>
         </div>
       </header>

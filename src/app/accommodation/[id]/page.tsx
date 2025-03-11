@@ -6,11 +6,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ReviewForm from "@/app/components/ReviewForm";
 import { getSessionUser } from "@/app/utils/getSessionUser";
+import LikeButton from "@/app/components/ LikeButton";
 // type SessionUser ={
 //   name:string;
 //   id:number;
 //   emmail:string
 // }
+
 const prisma = new PrismaClient();
 
 export default async function AccommodationPage({
@@ -38,7 +40,29 @@ export default async function AccommodationPage({
   if (!accommodation) {
     return <div className="text-center">宿泊施設が見つかりませんでした。</div>;
   }
+  let likedAccommodations: number[] = [];
+  let likesCountMap: Record<number, number> = {};
 
+  // ユーザーがいいねした宿泊施設を取得
+  if (session?.user?.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: { like: true },
+    });
+    likedAccommodations = user?.like.map((like) => like.accommodationId) || [];
+  }
+
+  // いいね数を取得
+  const likeCount = await prisma.like.groupBy({
+    by: ["accommodationId"],
+    _count: { accommodationId: true },
+  });
+
+  likeCount.forEach((item) => {
+    likesCountMap[item.accommodationId] = item._count.accommodationId;
+  });
+  // likedAccommodations={likedAccommodations}
+  // likesCountMap={likesCountMap}
   return (
     <main className="p-8 w-full mx-auto ">
       <h1 className="text-2xl font-bold mb-4 text-center">{accommodation.name}</h1>
@@ -59,6 +83,11 @@ export default async function AccommodationPage({
             <p>{review.content}</p>
             <p>評価: {review.rating}</p>
             <p>投稿者: {review.user.name}</p>
+            <LikeButton
+              accommodationId={accommodation.id}
+              isLiked={likedAccommodations.includes(accommodation.id)}
+              initialCount={likesCountMap[accommodation.id] || 0}
+            />
           </div>
         ))}
 
