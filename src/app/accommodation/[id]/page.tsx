@@ -7,6 +7,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ReviewForm from "@/app/components/ReviewForm";
 import { getSessionUser } from "@/app/utils/getSessionUser";
 import LikeButton from "@/app/components/ LikeButton";
+import SessionWrapper from "@/app/components/SessionWrapper";
 // type SessionUser ={
 //   name:string;
 //   id:number;
@@ -77,6 +78,7 @@ export default async function AccommodationPage({
         <p className="text-lg font-bold mb-8">¥{accommodation.price}/泊</p>
 
         {/* レビューを表示 */}
+        <SessionWrapper>
         <h2>レビュー</h2>
         {accommodation.reviews.map((review) => (
           <div key={review.id} className="mb-4">
@@ -98,6 +100,8 @@ export default async function AccommodationPage({
         {session?.user && (
           <ReviewForm accommodationId={accommodation.id} />
         )}
+        </SessionWrapper>
+       
 
         <Link href={"/"} className="block mb-4 hover:underline">トップへ戻る</Link>
       </div>

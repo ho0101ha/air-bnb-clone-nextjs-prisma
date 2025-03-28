@@ -1,20 +1,14 @@
 
 "use client";
 import axios from "axios";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-
-// /**
-//  * Login component allows users to either sign up or log in.
-//  * It handles authentication by toggling between login and sign-up modes.
-//  * 
-//  * State:
-//  * - isSignUp: boolean indicating whether the form is in sign-up mode.
-//  * - name: string for the user's name.
-//  * - email: string for the user's email.
-
 export default function Login() {
+  const { data: session } = useSession(); // ✅ layout.tsx で SessionProvider を適用したので、正常に動作するはず
+  const router = useRouter();
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -40,14 +34,27 @@ export default function Login() {
           throw new Error(response.data.error || "登録に失敗しました。");
         }
 
-        alert("新規登録が完了しました。ログインしてください。");
+        alert("新規登録が完了しました。自動的にログインします。");
+
+        // 登録後に自動ログイン
+        const loginResult = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
+
+        if (loginResult?.error) {
+          throw new Error(loginResult.error);
+        }
+
+        router.push("/"); // ホームへ遷移
+        return;
       }
 
-//       // ログイン
+      // ログイン
       const result = await signIn("credentials", {
         email,
         password,
-        callbackUrl: "/",
         redirect: false,
       });
 
@@ -55,8 +62,7 @@ export default function Login() {
         throw new Error(result.error);
       }
 
-      // ログイン成功時にリダイレクト
-      window.location.href = "/";
+      router.push("/"); // ホームへ遷移
     } catch (err: any) {
       setError(err.message || "エラーが発生しました。もう一度お試しください。");
     }
@@ -78,6 +84,7 @@ export default function Login() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full border p-2 rounded"
+                required
               />
             </div>
           )}
@@ -88,6 +95,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border p-2 rounded"
+              required
             />
           </div>
           <div className="mb-4">
@@ -97,6 +105,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border p-2 rounded"
+              required
             />
           </div>
           <button
@@ -106,9 +115,7 @@ export default function Login() {
             {isSignUp ? "新規登録" : "ログイン"}
           </button>
           <p className="text-sm text-center mt-4">
-            {isSignUp
-              ? "既にアカウントをお持ちですか？"
-              : "アカウントをお持ちでない場合"}
+            {isSignUp ? "既にアカウントをお持ちですか？" : "アカウントをお持ちでない場合"}
             <span
               onClick={toggleAuthMode}
               className="text-blue-500 cursor-pointer ml-1 underline"
@@ -117,6 +124,39 @@ export default function Login() {
             </span>
           </p>
         </form>
+        {/* <div className="mt-6">
+          <button
+            onClick={() => signIn("google", { callbackUrl: "/" })}
+            className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 mb-2"
+          >
+            Google でログイン
+          </button>
+          <button
+            onClick={() => signIn("line", { callbackUrl: "/" })}
+            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 mb-2"
+          >
+            LINE でログイン
+          </button>
+          <button
+            onClick={() => signIn("facebook", { callbackUrl: "/" })}
+            className="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800 mb-2"
+          >
+            Facebook でログイン
+          </button>
+          <button
+            onClick={() => signIn("github", { callbackUrl: "/" })}
+            className="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900"
+          >
+            GitHub でログイン
+          </button>
+        </div>
+        <div>
+        <button
+         onClick={() => signIn("twitter", { callbackUrl: "/" })}
+        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 mb-2">
+        X（旧Twitter）でログイン
+      </button>
+        </div> */}
       </div>
     </div>
   );

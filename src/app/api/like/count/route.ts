@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import { ZCOOL_KuaiLe } from "next/font/google";
 import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();

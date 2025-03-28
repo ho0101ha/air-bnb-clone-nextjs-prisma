@@ -20,7 +20,7 @@ model Accommodation {
   reservations  Reservation[]
   reviews      Review[]
   favorite     Favorite[]
-  property     Property?     @relation("AccommodationProperty")
+   property     Property?     @relation("AccommodationProperty")
 }
 model Like {
   id              Int            @id @default(autoincrement())
@@ -48,8 +48,13 @@ model User {
   id        Int        @id @default(autoincrement())
   name      String
   email     String     @unique
-  password  String     // ハッシュ化されたパスワードを保存
-  image     String?
+ password   String   // Email ログイン時のみ必要
+  // githubId   String?    @unique // GitHub OAuth 用
+  // googleId   String?    @unique // Google OAuth 用
+  // facebookId String?    @unique // Facebook OAuth 用
+  // lineId     String?    @unique // LINE OAuth 用
+  // twitterId  String?   @unique // X (旧Twitter) OAuth 用
+  image      String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   reviews   Review[]
@@ -59,9 +64,22 @@ model User {
   role      Role       @default(USER)
   properties Property[]
   hostRequests  HostRequest[]
+followers Follower[] @relation("UserFollowers") // 自分をフォローしている人
+following Follower[] @relation("UserFollowing") // 自分がフォローしている人
+
 }
+model Follower {
+  id          Int  @id @default(autoincrement())
 
+  followerId  Int  // フォローする人の ID
+  followingId Int  // フォローされる人の ID
+ 
+ 
+  follower   User @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following  User @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
 
+  @@unique([followerId, followingId]) // 同じユーザーを重複フォローできない
+}
 model HostRequest {
   id        Int      @id @default(autoincrement())
   userId    Int      @unique
@@ -75,6 +93,7 @@ model Review {
   rating          Int
   userId          Int
   user            User           @relation(fields: [userId], references: [id])
+  ownerId         Int
   accommodationId Int
   accommodation   Accommodation  @relation(fields: [accommodationId], references: [id])
   createdAt       DateTime       @default(now())
@@ -98,13 +117,14 @@ model Message {
 }
 
 model Property {
-  id              String        @id @default(uuid())
+  id              Int      @id @default(autoincrement())
   name            String
   location        String
   ownerId         Int
   owner           User           @relation(fields: [ownerId], references: [id])
-  accommodationId Int?            @unique  
+ accommodationId Int?            @unique  
   accommodation   Accommodation? @relation("AccommodationProperty", fields: [accommodationId], references: [id])
+  
 }
 
 enum Role {
