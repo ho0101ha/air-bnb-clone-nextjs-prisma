@@ -17,9 +17,6 @@ interface Accommodation {
   ownerId: number;
 }
 
- 
-
-
 interface Props {
   accommodations: Accommodation[];
   initialFavorites: number[];
@@ -42,6 +39,7 @@ export default function AccommodationList({
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<number[]>(initialFavorites);
   const filters = ["モダン", "ビーチ", "雪景色"];
+  const [searchText,setSearchText] = useState<string>("");
   const [followedUsers, setFollowedUsers] = useState<Set<number>>(new Set(initialFollowedUsers));
   const [followersCount, setFollowersCount] = useState<Record<number, number>>(followersCountMap);
 
@@ -126,6 +124,7 @@ export default function AccommodationList({
       <h2 className="text-lg font-semibold mb-7 text-center">
         様々なシーンの宿泊施設を演出します。
       </h2>
+      <div className="flex justify-between">
       <ul className="list-none p-0 flex justify-center">
         {filters.map((filter) => (
           <li
@@ -147,6 +146,19 @@ export default function AccommodationList({
           すべて表示
         </li>
       </ul>
+      <div className="flex ml-20">
+        <form className="flex"
+         onSubmit={(e) => {
+          e.preventDefault();
+          setSelectedFilter(searchText); // 検索語句をフィルターとして設定
+        }}>
+        <input type="text" value={searchText} onChange={(e) => setSearchText(e.target.value)}
+        className=" block rounded-sm  bg-gray-200"/>
+        <button type="submit" className="ml-1 rounded-md border text-white bg-red-500  p-2 hover:opacity-50">検索</button>
+        </form>
+        </div>
+      </div>
+     
     </div>
 
     {/* 宿泊施設（オーナーごとに表示） */}
@@ -207,108 +219,6 @@ export default function AccommodationList({
       ))}
     </div>
   </div>
-    // <div>
-    //   {/* フィルター UI */}
-    //   <div className="mb-4 w-max mx-auto">
-    //     <h2 className="text-lg font-semibold mb-7 text-center">
-    //       様々なシーンの宿泊施設を演出します。
-    //     </h2>
-    //     <ul className="list-none p-0 flex justify-center">
-    //       {filters.map((filter) => (
-    //         <li
-    //           key={filter}
-    //           className={`cursor-pointer p-3 rounded-md ${
-    //             selectedFilter === filter
-    //               ? "bg-red-500 text-white"
-    //               : "hover:bg-gray-200"
-    //           }`}
-    //           onClick={() => setSelectedFilter(filter)}
-    //         >
-    //           {filter}
-    //         </li>
-    //       ))}
-    //       <li
-    //         className={`cursor-pointer p-2 rounded-md ${
-    //           selectedFilter === null
-    //             ? "bg-red-500 text-white"
-    //             : "hover:bg-gray-200"
-    //         }`}
-    //         onClick={() => setSelectedFilter(null)}
-    //       >
-    //         すべて表示
-    //       </li>
-    //     </ul>
-    //   </div>
-
-    //   {/* 宿泊施設表示 */}
-    //   <div className={`${filteredAccommodations.length ===1 ? "flex justify-center" :"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}  w-full  mb-5`}>
-    //     {filteredAccommodations.map((accommodation) => (
-    //       <div
-    //         key={accommodation.id}
-    //         className="cursor-pointer border rounded-lg p-4 shadow-md hover:shadow-lg"
-    //       >
-    //         <img
-    //           src={accommodation.imageUrl}
-    //           alt={accommodation.name}
-    //           className="w-full h-48 object-cover rounded-lg mb-4"
-    //         />
-    //         <h3 className="text-lg font-semibold">{accommodation.name}</h3>
-    //         <p>{accommodation.description}</p>
-    //         <p className="text-sm text-gray-600">{accommodation.locationJP}</p>
-    //         <p className="text-lg font-bold">¥{accommodation.price}/泊</p>
-    //         <div className="flex justify-between items-center mt-4">
-    //           <Link
-    //             href={`accommodation/${accommodation.id}`}
-    //             className="rounded-md border border-black p-2 hover:bg-red-500 hover:text-white"
-    //           >
-    //             more
-    //           </Link>
-             
-    //           {/* お気に入りボタン */}
-    //           <button
-    //             onClick={() => toggleFavorite(accommodation.id)}
-    //             className="text-2xl"
-    //           >
-    //             {favorites.includes(accommodation.id) ? "⭐" : "☆"}
-    //           </button>
-    //         </div>
-            
-    //         {/* {いいね} */}
-    //         <LikeButton
-    //         accommodationId={accommodation.id}
-    //         isLiked={likedAccommodations.includes(accommodation.id)}
-    //         initialCount={likesCountMap[accommodation.id] || 0}
-    //         />
-            
-    //         {/* フォロー機能 */}
-    //         {/* <div className="mt-2">
-    //         <FollowButton
-    //             ownerId={accommodation.ownerId}
-    //             isFollowed={initialFollowedUsers.includes(accommodation.ownerId)}
-    //             initialFollowerCount={followersCountMap[accommodation.ownerId] || 0}
-    //           />
-    //         </div> */}
-      
-    //       </div>
-          
-    //     ))}
-    //   </div>
-      
-    // </div>
+   
   );
 }
-
-{/* <div className="mt-6 mb-20">
-      <h2 className="text-lg font-semibold text-center mb-3">オーナーをフォロー</h2>
-      <div className="flex flex-wrap gap-4 justify-center">
-        {Array.from(uniqueOwners).map((ownerId) => (
-          <FollowButton
-            key={ownerId}
-            ownerId={ownerId}
-            isFollowed={followedUsers.has(ownerId)}
-            followerCount={followersCount[ownerId] || 0}
-            onFollowToggle={toggleFollow}
-          />
-        ))}
-      </div>
-    </div> */}

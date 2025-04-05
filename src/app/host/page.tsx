@@ -3,13 +3,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+interface Property{
+  name:string;
+  location:string;
+}
 interface Accommodation {
-  id: number;
+  id: number | null;
   name: string;
   description: string;
   locationJP: string;
   imageUrl: string;
   price: number;
+  property:Property;
 }
 
 interface Reservation {
@@ -25,8 +30,24 @@ interface Reservation {
 export default function HostPage() {
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [newAccommodation, setNewAccommodation] = useState<Accommodation>({
+    id: null,
+    name: "",
+    description: "",
+    locationJP: "",
+    imageUrl: "",
+    price: 0,
+    property: {
+      name: "",
+      location: "",
+    },
+  });
+
 
   const [editingAccommodation, setEditingAccommodation] = useState<Accommodation | null>(null);
   const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
@@ -47,21 +68,7 @@ export default function HostPage() {
     fetchData();
   }, []);
 
-  // 宿泊施設を保存
-  // const handleSaveAccommodation = async () => {
-  //   if (!editingAccommodation) return;
   
-  //   console.log("送信する宿泊施設データ:", editingAccommodation); 
-  
-  //   try {
-  //     await axios.put("/api/host", { accommodation: editingAccommodation });
-  //     setAccommodations(accommodations.map((acc) => (acc.id === editingAccommodation.id ? editingAccommodation : acc)));
-  //     setEditingAccommodation(null);
-  //   } catch (err) {
-  //     console.error("宿泊施設の保存に失敗:", err); 
-  //     alert("保存に失敗しました");
-  //   }
-  // };
   const handleSaveAccommodation = async () => {
     if (!editingAccommodation) return;
   
@@ -79,21 +86,7 @@ export default function HostPage() {
   };
   
 
-  // 予約を保存
-  // const handleSaveReservation = async () => {
-  //   if (!editingReservation) return;
   
-  //   try {
-  //     const response = await axios.put("/api/host", { reservation: editingReservation });
-  //     const updatedReservation = response.data;
-  //     setReservations(reservations.map((res) => (res.id === updatedReservation.id ? updatedReservation : res)));
-  //     setEditingReservation(null);
-  //     alert('予約を変更しました');
-  //   } catch (err) {
-  //     alert("予約の保存に失敗しました");
-  //     console.log("reservation 変更に失敗しました", err);
-  //   }
-  // };
   const handleSaveReservation = async () => {
     if (!editingReservation) return;
   
@@ -109,22 +102,62 @@ export default function HostPage() {
     }
   };
 
-  // 宿泊施設または予約の削除
-  // const handleDelete = async (id: number, type: "accommodation" | "reservation") => {
-  //   if (!confirm(`本当に削除しますか？`)) return;
 
-  //   try {
-  //     await axios.delete("/api/host", { data: { id, type } });
-  //     if (type === "accommodation") {
-  //       setAccommodations(accommodations.filter((acc) => acc.id !== id));
-  //     } else {
-  //       setReservations(reservations.filter((res) => res.id !== id));
-  //     }
-  //   } catch (err) {
-  //     alert("削除に失敗しました");
-  //   }
-  // };
-  const handleDelete = async (id: number, type: "accommodation" | "reservation") => {
+  const handleAddAccommodation = async () => {
+    if (
+      !newAccommodation.name.trim() ||
+      !newAccommodation.description.trim() ||
+      !newAccommodation.locationJP.trim() ||
+      !selectedImage ||
+      newAccommodation.price <= 0
+    ) {
+      alert("すべての項目を入力してください");
+      return;
+    }
+  
+    try {
+      const formData = new FormData();
+      formData.append("image", selectedImage);
+  
+      // 画像アップロード
+      const uploadRes = await axios.post("/api/host/upload", formData);
+      const imageUrl = uploadRes.data.imageUrl;
+  
+      // 宿泊施設追加リクエスト
+      const response = await axios.post("/api/host/accommodation", {
+        name: newAccommodation.name,
+        description: newAccommodation.description,
+        location: newAccommodation.property.location,
+        locationJP: newAccommodation.locationJP,
+        imageUrl, // ここがアップロード後の画像URL
+        price: newAccommodation.price,
+      });
+  
+      setAccommodations([...accommodations, response.data]);
+  
+      // リセット
+      setNewAccommodation({
+        id: null,
+        name: "",
+        description: "",
+        locationJP: "",
+        imageUrl: "",
+        price: 0,
+        property: {
+          name: "",
+          location: "",
+        },
+      });
+      setSelectedImage(null);
+  
+      alert("宿泊施設を追加しました");
+    } catch (error: any) {
+      console.error("宿泊施設の追加に失敗しました:", error.response?.data || error);
+      alert("宿泊施設の追加に失敗しました");
+    }
+  };
+  
+  const handleDelete = async (id: number | null, type: "accommodation" | "reservation") => {
     if (!confirm(`本当に削除しますか？`)) return;
 
     try {
@@ -255,6 +288,60 @@ export default function HostPage() {
             )}
           </div>
         ))}
+      </div>
+      <div>
+        <h2>新規宿泊施設登録</h2>
+        <div>
+            <input type="text" 
+            placeholder="宿泊施設名"
+            value={newAccommodation.name}
+            onChange={(e) => setNewAccommodation({
+              ...newAccommodation,name:e.target.value
+            })} 
+            className="text-lg font-semibold mt-2"/>
+              <input type="text" 
+              placeholder="説明"
+              value={newAccommodation.description}
+            onChange={(e) => setNewAccommodation({
+              ...newAccommodation,description:e.target.value
+            })} 
+            className="text-lg font-semibold mt-2"/>
+                 <input type="text" 
+                 placeholder="都市名"
+                 value={newAccommodation.locationJP}
+            onChange={(e) => setNewAccommodation({
+              ...newAccommodation,locationJP:e.target.value
+            })} 
+            className="text-lg font-semibold mt-2"/>
+            <input
+  type="file"
+  accept="image/*"
+  onChange={(e) => {
+    const file = e.target.files?.[0] || null;
+    setSelectedImage(file);
+  }}
+  className="text-lg font-semibold mt-2"
+/>
+
+                 {/* <input
+          type="text"
+          placeholder="画像URL"
+          value={newAccommodation.imageUrl}
+          onChange={(e) => setNewAccommodation({ ...newAccommodation, imageUrl: e.target.value })}
+          className="text-lg font-semibold mt-2"
+        /> */}
+                    <input type="number" 
+                    placeholder="値段"
+                    value={newAccommodation.price}
+            onChange={(e) => setNewAccommodation({
+              ...newAccommodation,price:Number(e.target.value)
+            })} />
+         
+         <h3 className="text-lg font-semibold mt-2">所有者情報</h3>
+        <input type="text" placeholder="所有者名" value={newAccommodation.property.name} onChange={(e) => setNewAccommodation({ ...newAccommodation, property: { ...newAccommodation.property, name: e.target.value } })} className="border p-2 w-full mb-2" />
+        <input type="text" placeholder="所有者所在地" value={newAccommodation.property.location} onChange={(e) => setNewAccommodation({ ...newAccommodation, property: { ...newAccommodation.property, location: e.target.value } })} className="border p-2 w-full mb-2" />
+         <button onClick={handleAddAccommodation}>宿泊施設を追加</button>
+        </div>
       </div>
     </div>
   );

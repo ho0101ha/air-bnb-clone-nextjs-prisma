@@ -1,5 +1,6 @@
 import { getSessionUser } from "@/app/utils/getSessionUser";
 import { PrismaClient } from "@prisma/client";
+import { create } from "domain";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
@@ -89,3 +90,76 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ error: "更新に失敗しました" }, { status: 500 });
     }
 }
+
+export async function POST(req: NextRequest) {
+    const user = await getSessionUser();
+    if (!user) return NextResponse.json({ error: "未認証のリクエスト" }, { status: 401 });
+  
+    try {
+      const body = await req.json();
+      console.log("リクエストデータ:", body);
+  
+      const { name, description, location, locationJP, imageUrl, price } = body;
+  
+      // バリデーションチェック
+      if (!name || !description || !location || !locationJP || !imageUrl || !price) {
+        return NextResponse.json({ error: "すべての項目を入力してください", receivedData: body }, { status: 400 });
+      }
+  
+      if (typeof price !== "number") {
+        return NextResponse.json({ error: "価格は数値である必要があります", receivedData: body }, { status: 400 });
+      }
+  
+      // 既存の property を検索
+      const existingProperty = await prisma.property.findFirst({
+        where: { ownerId: user.id },
+      });
+  
+      let newAccommodation;
+  
+      if (existingProperty) {
+        // 既に property がある場合は connect
+        newAccommodation = await prisma.accommodation.create({
+          data: {
+            name,
+            description,
+            location,
+            locationJP,
+            imageUrl,
+            price,
+            property: {
+              connect: { id: existingProperty.id },
+            },
+          },
+          include: { property: true },
+        });
+      } else {
+        // property がない場合は create
+        newAccommodation = await prisma.accommodation.create({
+          data: {
+            name,
+            description,
+            location,
+            locationJP,
+            imageUrl,
+            price,
+            property: {
+              create: {
+                ownerId: user.id,
+                name,
+                location,
+              },
+            },
+          },
+          include: { property: true },
+        });
+      }
+  
+      return NextResponse.json(newAccommodation, { status: 201 });
+  
+    } catch (error) {
+      console.error("宿泊施設の追加に失敗しました", error);
+      return NextResponse.json({ error: "宿泊施設の追加に失敗しました", detail: error instanceof Error ? error.message : error }, { status: 500 });
+    }
+  }
+  
