@@ -2,9 +2,7 @@
 import bcrypt from "bcrypt";
 import { PrismaClient, Role } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { getSession } from "next-auth/react";
 
-import { error } from "console";
 import { getSessionUser } from "@/app/utils/getSessionUser";
 
 const prisma = new PrismaClient();

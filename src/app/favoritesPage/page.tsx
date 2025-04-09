@@ -3,8 +3,7 @@ import React from 'react'
 import { authOptions } from '../api/auth/[...nextauth]/route'
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
-import Reservation from '../components/Reservation';
-import ReviewForm from '../components/ReviewForm';
+
 
 export default  async function FavoritesPage() {
     const  session = await getServerSession(authOptions);

@@ -1,38 +1,4 @@
 
-// import { NextRequest, NextResponse } from "next/server";
-
-// import { PrismaClient } from "@prisma/client";
-// import { getServerSession } from "next-auth";
-// import { authOptions } from "../auth/[...nextauth]/route";
-// const prisma = new PrismaClient()
-// export async function POST(req: NextRequest) {
-//   try {
-//     const { userId, ownerId } = await req.json();
-
-//     if (!userId || ownerId) {
-//       return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
-//     }
-
-//     const existingFollow = await prisma.follower.findFirst({
-//       where: { followerId: Number(userId), followingId: Number(ownerId) },
-//     });
-
-//     if (existingFollow) {
-//       await prisma.follower.delete({
-//         where: { id: existingFollow.id },
-//       });
-//       return NextResponse.json({ message: "Unfollowed" });
-//     } else {
-//       await prisma.follower.create({
-//         data: { followerId: Number(userId), followingId: Number(ownerId) },
-//       });
-//       return NextResponse.json({ message: "Followed" });
-//     }
-//   } catch (error) {
-//     console.error("API Error:", error);
-//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-//   }
-// }
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";

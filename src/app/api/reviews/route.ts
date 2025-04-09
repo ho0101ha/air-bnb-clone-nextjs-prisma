@@ -13,11 +13,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
     }
 
-    const { content, rating, accommodationId } = await req.json();
+    const body = await req.json();
+    const { content, rating, accommodationId } = body;
 
-    if (!content || !rating || !accommodationId) {
+    if (
+      typeof content !== "string" ||
+      typeof rating !== "number" ||
+      typeof accommodationId !== "number"
+    ) {
       return NextResponse.json(
-        { error: "すべての項目を入力してください" },
+        { error: "すべての項目を正しく入力してください" },
+        { status: 400 }
+      );
+    }
+
+    // 宿泊施設とオーナーを取得
+    const accommodation = await prisma.accommodation.findUnique({
+      where: { id: accommodationId },
+      include: {
+        property: {
+          include: {
+            owner: true,
+          },
+        },
+      },
+    });
+
+    if (!accommodation?.property?.owner) {
+      return NextResponse.json(
+        { error: "宿泊施設のオーナーが見つかりません" },
         { status: 400 }
       );
     }
@@ -25,9 +49,10 @@ export async function POST(req: Request) {
     const review = await prisma.review.create({
       data: {
         content,
-        rating: parseInt(rating, 10),
-        accommodationId: parseInt(accommodationId, 10),
-        userId: parseInt(session.user.id), // 修正済み
+        rating,
+        accommodationId,
+        userId: parseInt(session.user.id),
+        ownerId: accommodation.property.owner.id,
       },
     });
 

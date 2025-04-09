@@ -15,28 +15,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Failed to fetch reservations" }, { status: 500 });
   }
 }
-// export async function GET(req: NextRequest) {
-//   try {
-//     const session = await getServerSession(authOptions);
-//     if (!session) {
-//       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-//     }
-
-//     const reservations = await prisma.reservation.findMany({
-//       where: { 
-//         email: session.user.email,
-//         // 🔹 ここで paid の条件を削除（すべての予約を取得）
-//       }, 
-//       include: { accommodation: true },
-//       orderBy: { startDate: "desc" },
-//     });
-//     console.log("取得した予約:", reservations); // デバッグ用
-//     return NextResponse.json(reservations);
-//   } catch (error) {
-//     console.error("Error fetching reservations:", error);
-//     return new Response('reservations接続に失敗', { status: 500 });
-//   }
-// }
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);

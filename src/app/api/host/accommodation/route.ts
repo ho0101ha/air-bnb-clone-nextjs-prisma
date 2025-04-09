@@ -1,31 +1,44 @@
 import { getSessionUser } from "@/app/utils/getSessionUser";
 import { PrismaClient } from "@prisma/client";
-import { create } from "domain";
+
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 const appCreatorEmail = process.env.APPCREATOREMAIL;
 
 export async function GET(req: NextRequest) {
-    const user = await getSessionUser();
-    if (!user) return NextResponse.json({ error: "未認証のリクエスト" }, { status: 401 });
+  const user = await getSessionUser();
+  if (!user) return NextResponse.json({ error: "未認証のリクエスト" }, { status: 401 });
 
-    const isAdmin = user.email === appCreatorEmail;
+  const isAdmin = user.email === appCreatorEmail;
 
-    try {
-        const accommodations = isAdmin
-            ? await prisma.accommodation.findMany({ include: { property: true } })
-            : await prisma.accommodation.findMany({
-                  where: { property: { ownerId: user.id } },
-                  include: { property: true },
-              });
+  try {
+    const accommodations = isAdmin
+      ? await prisma.accommodation.findMany({ include: { property: true } })
+      : await prisma.accommodation.findMany({
+          where: { property: { ownerId: user.id } },
+          include: { property: true },
+        });
 
-        return NextResponse.json(accommodations);
-    } catch (error) {
-        console.error("宿泊施設取得エラー:", error);
-        return NextResponse.json({ error: "データ取得に失敗しました" }, { status: 500 });
-    }
+    const reservations = isAdmin
+      ? await prisma.reservation.findMany()
+      : await prisma.reservation.findMany({
+          where: {
+            accommodation: {
+              property: {
+                ownerId: user.id,
+              },
+            },
+          },
+        });
+
+    return NextResponse.json({ accommodations, reservations });
+  } catch (error) {
+    console.error("宿泊施設取得エラー:", error);
+    return NextResponse.json({ error: "データ取得に失敗しました" }, { status: 500 });
+  }
 }
+
 
 export async function DELETE(req: NextRequest) {
     const user = await getSessionUser();
