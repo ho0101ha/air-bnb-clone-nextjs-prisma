@@ -16,6 +16,7 @@ export async function DELETE(req:NextRequest) {
       await prisma.accommodation.delete({where:{id}});
       return NextResponse.json({messge:"宿泊先を削除しました"});
     } catch (error) {
+        console.error("宿泊先削除時のエラー:", error); 
         return NextResponse.json({error:"削除に失敗しました"},{status:500});
     }
 }

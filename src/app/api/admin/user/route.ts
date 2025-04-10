@@ -1,13 +1,12 @@
 import { getSessionUser } from "@/app/utils/getSessionUser";
 import { PrismaClient } from "@prisma/client";
-import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
 export async function DELETE(req:NextRequest) {
     const user = await getSessionUser();
     // const appCreatorEmail = "springwa04@gmail.com";
-    const appCreatorEmail = process.env.APPCREATOREMAil;
+    const appCreatorEmail = process.env.APPCREATOREMAIL;
     if(!user || (user?.role === "ADMIN" && user.email !== appCreatorEmail)){
         return NextResponse.json({error:"権限がありません"},{status:403});
     }
@@ -17,13 +16,14 @@ export async function DELETE(req:NextRequest) {
       await prisma.user.delete({where:{id}});
       return NextResponse.json({messge:"ユーザーを削除しました"});
     } catch (error) {
+      console.error("削除失敗のエラー:", error); 
         return NextResponse.json({error:"削除に失敗しました"},{status:500});
     }
 }
 
 export async function PATCH(req:NextRequest) {
     const user = await getSessionUser();
-    const appCreatorEmail = process.env.APPCREATOREMAil;
+    const appCreatorEmail = process.env.APPCREATOREMAIL;
     if(!user || (user?.role === "ADMIN" && user.email !== appCreatorEmail)){
         return NextResponse.json({error:"権限がありません"},{status:403});
     }
@@ -38,6 +38,7 @@ export async function PATCH(req:NextRequest) {
       data:{role}});
       return NextResponse.json({messge:`ユーザーの権限を${role}にしました`});
     } catch (error) {
-        return NextResponse.json({error:"削除に失敗しました"},{status:500});
+      console.error("権限失敗のエラー:", error); 
+        return NextResponse.json({error:"権限変更に失敗しました"},{status:500});
     }
 }

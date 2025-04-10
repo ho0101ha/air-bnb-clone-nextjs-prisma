@@ -42,7 +42,7 @@ export default async function AccommodationPage({
     return <div className="text-center">宿泊施設が見つかりませんでした。</div>;
   }
   let likedAccommodations: number[] = [];
-  let likesCountMap: Record<number, number> = {};
+  const likesCountMap: Record<number, number> = {};
 
   // ユーザーがいいねした宿泊施設を取得
   if (session?.user?.email) {
