@@ -1,12 +1,10 @@
-
 "use client";
 import axios from "axios";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function Login() {
-  const { data: session } = useSession(); // ✅ layout.tsx で SessionProvider を適用したので、正常に動作するはず
   const router = useRouter();
 
   const [isSignUp, setIsSignUp] = useState(false);
@@ -23,7 +21,6 @@ export default function Login() {
 
     try {
       if (isSignUp) {
-        // 新規登録
         const response = await axios.post("/api/users", {
           name,
           email,
@@ -36,7 +33,6 @@ export default function Login() {
 
         alert("新規登録が完了しました。自動的にログインします。");
 
-        // 登録後に自動ログイン
         const loginResult = await signIn("credentials", {
           email,
           password,
@@ -47,11 +43,10 @@ export default function Login() {
           throw new Error(loginResult.error);
         }
 
-        router.push("/"); // ホームへ遷移
+        router.push("/");
         return;
       }
 
-      // ログイン
       const result = await signIn("credentials", {
         email,
         password,
@@ -62,9 +57,13 @@ export default function Login() {
         throw new Error(result.error);
       }
 
-      router.push("/"); // ホームへ遷移
-    } catch (err: any) {
-      setError(err.message || "エラーが発生しました。もう一度お試しください。");
+      router.push("/");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "エラーが発生しました。もう一度お試しください。");
+      } else {
+        setError("予期しないエラーが発生しました。");
+      }
     }
   };
 
@@ -124,39 +123,6 @@ export default function Login() {
             </span>
           </p>
         </form>
-        {/* <div className="mt-6">
-          <button
-            onClick={() => signIn("google", { callbackUrl: "/" })}
-            className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 mb-2"
-          >
-            Google でログイン
-          </button>
-          <button
-            onClick={() => signIn("line", { callbackUrl: "/" })}
-            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 mb-2"
-          >
-            LINE でログイン
-          </button>
-          <button
-            onClick={() => signIn("facebook", { callbackUrl: "/" })}
-            className="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800 mb-2"
-          >
-            Facebook でログイン
-          </button>
-          <button
-            onClick={() => signIn("github", { callbackUrl: "/" })}
-            className="w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900"
-          >
-            GitHub でログイン
-          </button>
-        </div>
-        <div>
-        <button
-         onClick={() => signIn("twitter", { callbackUrl: "/" })}
-        className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 mb-2">
-        X（旧Twitter）でログイン
-      </button>
-        </div> */}
       </div>
     </div>
   );

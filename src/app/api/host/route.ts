@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 const prisma = new PrismaClient();
 const appCreatorEmail = process.env.APPCREATOREMAIL;
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "未認証のリクエスト" }, { status: 401 });

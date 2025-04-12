@@ -1,11 +1,11 @@
 "use client"
-import { PrismaClient } from '@prisma/client';
+
 import Link from 'next/link';
 import React, { useState } from 'react'
 import Reservation from './Reservation';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
-const prisma = new PrismaClient;
+
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface Reservation {

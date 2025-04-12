@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
+import Link from "next/link";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
@@ -20,7 +21,7 @@ export default function SuccessPage() {
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-2xl font-bold">支払いが完了しました！</h1>
       <p>予約が確定しました。ありがとうございました！</p>
-      <a href="/" className="mt-4 text-blue-500">ホームに戻る</a>
+      <Link href="/" className="mt-4 text-blue-500">ホームに戻る</Link>
     </div>
   );
 }

@@ -59,7 +59,8 @@ export default function HostPage() {
         const { data } = await axios.get("/api/host");
         setAccommodations(data.accommodations);
         setReservations(data.reservations);
-      } catch (err) {
+      } catch (error) {
+        console.error("データ取得失敗:", error);
         setError("データの取得に失敗しました");
       } finally {
         setLoading(false);
@@ -79,8 +80,8 @@ export default function HostPage() {
       setAccommodations(accommodations.map((acc) => (acc.id === editingAccommodation.id ? editingAccommodation : acc)));
       setEditingAccommodation(null);
       alert('宿泊施設を更新しました');
-    } catch (err) {
-      console.error("宿泊施設の保存に失敗:", err); 
+    } catch (error) {
+      console.error("宿泊施設の保存に失敗:", error); 
       alert("保存に失敗しました");
     }
   };
@@ -96,9 +97,9 @@ export default function HostPage() {
       setReservations(reservations.map((res) => (res.id === updatedReservation.id ? updatedReservation : res)));
       setEditingReservation(null);
       alert('予約を変更しました');
-    } catch (err) {
+    } catch (error) {
       alert("予約の保存に失敗しました");
-      console.log("reservation 変更に失敗しました", err);
+      console.log("reservation 変更に失敗しました", error);
     }
   };
 
@@ -151,8 +152,8 @@ export default function HostPage() {
       setSelectedImage(null);
   
       alert("宿泊施設を追加しました");
-    } catch (error: any) {
-      console.error("宿泊施設の追加に失敗しました:", error.response?.data || error);
+    } catch (error) {
+      console.error("宿泊施設の追加に失敗しました:", error);
       alert("宿泊施設の追加に失敗しました");
     }
   };
@@ -169,7 +170,8 @@ export default function HostPage() {
         await axios.delete("/api/host/reservation", { data: { id} });
         setReservations(reservations.filter((res) => res.id !== id));
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("宿泊施設の削除に失敗しました:", error);
       alert("削除に失敗しました");
     }
   };

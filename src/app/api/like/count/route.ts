@@ -12,6 +12,7 @@ export async function GET() {
         });
         return NextResponse.json(likeCount,{status:200});
     } catch (error) {
+        console.error("likeカウントエラー:", error);
         return NextResponse.json({ error: "エラーが発生しました" }, { status: 500 });
   }
     }

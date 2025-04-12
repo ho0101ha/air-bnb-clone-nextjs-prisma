@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
 
 const prisma = new PrismaClient();
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const reservations = await prisma.reservation.findMany({
       include: { accommodation: true }, // 宿泊施設の情報を含める
@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
+
   try {
     
     const { accommodationId, name, people, email, startDate, endDate } = await request.json();
@@ -39,25 +39,42 @@ export async function POST(request: NextRequest) {
     console.log("予約データ保存成功:",reservation.id);
     return NextResponse.json(reservation);
   } catch (error) {
-    console.error('Error creating reservation:', error);
+    console.error('reservation失敗エラー:', error);
     return NextResponse.json({ error: 'Failed to create reservation' }, { status: 500 });
   
   }
 }
 
 
-export async function PUT(req: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+// export async function PUT(req: Request) {
+//   const session = await getServerSession(authOptions);
+//   if (!session) {
+//     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+//   }
+
+//   const { id, people, startDate, endDate } = await req.json();
+
+//   const reservation = await prisma.reservation.update({
+//     where: { id },
+//     data: { people, startDate, endDate },
+//   });
+
+//   return NextResponse.json(reservation);
+  
+// }
+
+export async function PUT(req: NextRequest) {
+  try {
+    const { id, people, startDate, endDate } = await req.json();
+
+    const reservation = await prisma.reservation.update({
+      where: { id },
+      data: { people, startDate: new Date(startDate), endDate: new Date(endDate) },
+    });
+
+    return NextResponse.json(reservation);
+  } catch (error) {
+    console.error("PUTエラー:", error);
+    return NextResponse.json({ error: "Failed to update reservation" }, { status: 500 });
   }
-
-  const { id, people, startDate, endDate } = await req.json();
-
-  const reservation = await prisma.reservation.update({
-    where: { id },
-    data: { people, startDate, endDate },
-  });
-
-  return NextResponse.json(reservation);
 }

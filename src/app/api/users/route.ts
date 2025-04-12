@@ -45,8 +45,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(user);
-  } catch (error: any) {
-    console.error("Error creating user:", error.message);
+  } catch (error) {
+    console.error("Error creating user:", error);
     return NextResponse.json(
       { error: "ユーザー登録中にエラーが発生しました。" },
       { status: 500 }

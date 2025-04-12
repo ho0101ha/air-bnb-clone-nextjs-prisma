@@ -14,6 +14,7 @@ const prisma = new PrismaClient();
 
 
 export default async function AccommodationPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let accommodations:any= [];
   try {
     accommodations = await prisma.accommodation.findMany({
@@ -40,9 +41,9 @@ export default async function AccommodationPage() {
  
   
   let likedAccommodations: number[] = [];
-  let likesCountMap: Record<number, number> = {};
+  const likesCountMap: Record<number, number> = {};
   let initialFollowedUsers: number[] = [];
-  let followersCountMap: Record<number, number> = {};
+  const followersCountMap: Record<number, number> = {};
 
   // ユーザーがいいねした宿泊施設を取得
   if (session?.user?.email) {
@@ -126,6 +127,7 @@ if (session?.user?.id) {
         <div>
           <SessionWrapper>
           <AccommodationList
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
            accommodations={accommodations.map((a:any) => ({
             ...a,
             ownerId: a.property?.owner?.id ?? 0, // オーナーIDを取得

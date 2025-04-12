@@ -69,8 +69,8 @@ export default function AccommodationList({
       } else {
         console.error("Failed to update favorite");
       }
-    } catch (error: any) {
-      console.error("Error updating favorite:", error.response?.data || error);
+    } catch (error) {
+      console.error("Error updating favorite:", error);
     }
   };
 

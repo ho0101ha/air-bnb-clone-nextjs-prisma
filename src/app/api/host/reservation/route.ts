@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 const prisma = new PrismaClient();
 const appCreatorEmail = process.env.APPCREATOREMAIL;
 
-export async function GET(req: NextRequest) {
+export async function GET() {
     const user = await getSessionUser();
     if (!user) return NextResponse.json({ error: "未認証のリクエスト" }, { status: 401 });
 
@@ -66,7 +66,7 @@ export async function PUT(req: NextRequest) {
         const { reservation } = await req.json();
         if (!reservation) return NextResponse.json({ error: "更新データが不足しています" }, { status: 400 });
 
-        const isAdmin = user.email === appCreatorEmail;
+        
         const existingReservation = await prisma.reservation.findUnique({
             where: { id: reservation.id },
         });

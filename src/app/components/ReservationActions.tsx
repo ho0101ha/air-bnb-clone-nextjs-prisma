@@ -13,9 +13,9 @@ type Reservation ={
    endDate:string;
 }
 export default function ReservationActions({reservations = []}:{reservations:Reservation[]}) {
-    const [editReservation,setEditReservation] = useState<any>(null);
+    const [editReservation,setEditReservation] = useState<Reservation | null>(null);
     
-     const handleEditReservation = async(e:any)=>{
+     const handleEditReservation = async(e: React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
         await axios.patch("/api/host/reservations",editReservation);
         alert('予約を更新しました');

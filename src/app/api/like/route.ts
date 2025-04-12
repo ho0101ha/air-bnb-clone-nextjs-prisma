@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: "Like updated" });
   } catch (error) {
+    console.error("いいね変更エラー:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

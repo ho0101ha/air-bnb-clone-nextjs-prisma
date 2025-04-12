@@ -23,8 +23,8 @@ export default function ReviewForm({ accommodationId }: { accommodationId: numbe
       alert("レビューを投稿しました");
       setContent("");
       setRating(5);
-    } catch (error: any) {
-      console.error("レビュー投稿エラー:", error.response?.data || error.message);
+    } catch (error) {
+      console.error("レビュー投稿エラー:", error);
       alert("レビューの投稿に失敗しました");
     } finally {
       setLoading(false);

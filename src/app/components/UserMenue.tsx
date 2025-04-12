@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { getSessionUser } from '../utils/getSessionUser';
-import HostRequestButton from './HostRequestButton';
+
 
 export default async function UserMenue() {
   const user = await getSessionUser(); 

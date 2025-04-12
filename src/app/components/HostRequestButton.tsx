@@ -14,8 +14,12 @@ export default function HostRequestButton() {
     try {
       await axios.post("/api/host-request");
       setMessage("HOST 申請を送信しました！");
-    } catch (error: any) {
-      setMessage(error.response?.data?.error || "申請に失敗しました");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setMessage(error.response?.data?.error || "申請に失敗しました");
+      } else {
+        setMessage("予期しないエラーが発生しました");
+      }
     } finally {
       setLoading(false);
     }
