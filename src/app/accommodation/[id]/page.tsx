@@ -13,16 +13,16 @@ import SessionWrapper from "@/app/components/SessionWrapper";
 //   id:number;
 //   emmail:string
 // }
+interface AccommodationPageProps {
+  params: {
+    id: string;
+  };
+}
 
 const prisma = new PrismaClient();
 
-export default async function AccommodationPage({
-  params,
-}: {
-  params: { id: number
 
-   };
-}) {
+export default async function AccommodationPage({ params }: AccommodationPageProps)  {
   const sessionUser = await getSessionUser();
   const session = await getServerSession(authOptions);
   const user = sessionUser ? { name: sessionUser.name, email: sessionUser.email } : null;
