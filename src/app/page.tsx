@@ -97,7 +97,7 @@ if (session?.user?.id) {
       followersCountMap[item.followingId] = item._count.followingId;
     });
   } catch (error) {
-    console.error('フォローの切り替え失敗:', error);
+    console.error('フォロー切り替え失敗:', error);
     console.log("フォローの切り替えに失敗しました");
   }
   
