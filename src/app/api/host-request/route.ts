@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/app/utils/getSessionUser";
 
-export async function POST(_req: Request) { // ← unused 対策で _req に変更
+export async function POST() { 
   try {
     const user = await getSessionUser();
     if (!user) {
