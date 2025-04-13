@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState,  } from "react";
 import axios from "axios";
-import LikeButton from "./ LikeButton";
+import LikeButton from "./LikeButton";
 import FollowButton from "./FollowButton";
 
 interface Accommodation {

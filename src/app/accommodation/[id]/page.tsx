@@ -8,7 +8,8 @@ import Reservation from "@/app/components/Reservation";
 import ReviewForm from "@/app/components/ReviewForm";
 
 import SessionWrapper from "@/app/components/SessionWrapper";
-import LikeButton from "@/app/components/ LikeButton";
+import LikeButton from "@/app/components/LikeButton";
+
 
 // Next.js の App Router 向けの props 型
 type Props = {
