@@ -13,16 +13,16 @@ import SessionWrapper from "@/app/components/SessionWrapper";
 //   id:number;
 //   emmail:string
 // }
-interface AccommodationPageProps {
-  params: {
-    id: string;
-  };
-}
-
 
 const prisma = new PrismaClient();
 
-export default async function AccommodationPage({ params }: AccommodationPageProps) {
+export default async function AccommodationPage({
+  params,
+}: {
+  params: { id: number
+
+   };
+}) {
   const sessionUser = await getSessionUser();
   const session = await getServerSession(authOptions);
   const user = sessionUser ? { name: sessionUser.name, email: sessionUser.email } : null;
@@ -31,7 +31,7 @@ export default async function AccommodationPage({ params }: AccommodationPagePro
 
   // 宿泊施設情報を取得
   const accommodation = await prisma.accommodation.findUnique({
-    where: { id: parseInt(params.id, 10) },
+    where: { id: Number(params.id) },
     include: {
       reservations: true,
       reviews: { include: { user: true } }, // レビューとユーザー情報を取得
