@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+
 
 const prisma = new PrismaClient();
 export async function GET() {
@@ -12,6 +11,7 @@ export async function GET() {
 
     return NextResponse.json(reservations);
   } catch (error) {
+    console.error('reservations接続失敗エラー:', error);
     return NextResponse.json({ error: "Failed to fetch reservations" }, { status: 500 });
   }
 }
