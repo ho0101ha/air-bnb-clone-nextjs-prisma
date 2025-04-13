@@ -2,9 +2,9 @@
 import Link from "next/link";
 import React, { useState,  } from "react";
 import axios from "axios";
-
-import FollowButton from "./FollowButton";
 import LikeButton from "./LikeButton";
+import FollowButton from "./FollowButton";
+
 
 interface Accommodation {
   id: number;

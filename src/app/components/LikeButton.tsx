@@ -7,7 +7,7 @@ interface LikeButtonProps {
   isLiked: boolean;
   initialCount: number;
 }
-export default function  LikeButton({accommodationId,isLiked,initialCount}:LikeButtonProps) {
+export default function LikeButton({accommodationId,isLiked,initialCount}:LikeButtonProps) {
     const [liked,setLiked] = useState(isLiked);
     const [likeCount,setLikeCount] = useState(initialCount);
     const toggleLike = async() =>{

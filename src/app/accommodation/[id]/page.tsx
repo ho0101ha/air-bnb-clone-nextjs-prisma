@@ -1,25 +1,22 @@
-import React from "react";
-import Link from "next/link";
+// app/accommodation/[id]/page.tsx
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getSessionUser } from "@/app/utils/getSessionUser";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import Reservation from "@/app/components/Reservation";
 import ReviewForm from "@/app/components/ReviewForm";
 import LikeButton from "@/app/components/LikeButton";
 import SessionWrapper from "@/app/components/SessionWrapper";
 
-
-
-
-// Next.js の App Router 向けの props 型
-type Props = {
+type PageProps = {
   params: {
     id: string;
   };
 };
 
-export default async function AccommodationPage({ params }: Props) {
+export default async function Page({ params }: PageProps) {
   const sessionUser = await getSessionUser();
   const session = await getServerSession(authOptions);
   const user = sessionUser
@@ -38,8 +35,8 @@ export default async function AccommodationPage({ params }: Props) {
     return <div className="text-center">宿泊施設が見つかりませんでした。</div>;
   }
 
-  let likedAccommodations: number[] = [];
   const likesCountMap: Record<number, number> = {};
+  let likedAccommodations: number[] = [];
 
   if (session?.user?.email) {
     const user = await prisma.user.findUnique({
@@ -87,11 +84,10 @@ export default async function AccommodationPage({ params }: Props) {
           ))}
 
           <Reservation accommodation={accommodation} user={user} />
-
           {session?.user && <ReviewForm accommodationId={accommodation.id} />}
         </SessionWrapper>
 
-        <Link href={"/"} className="block mb-4 hover:underline">
+        <Link href="/" className="block mb-4 hover:underline">
           トップへ戻る
         </Link>
       </div>
