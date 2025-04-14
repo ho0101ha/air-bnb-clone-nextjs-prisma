@@ -13,7 +13,7 @@ import SessionWrapper from './components/SessionWrapper';
 const prisma = new PrismaClient();
 
 
-export default async function AccommodationPage() {
+export default async function Page() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let accommodations:any= [];
   try {
