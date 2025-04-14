@@ -12,14 +12,14 @@ import LikeButton from "@/app/components/LikeButton";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-
-type Props = {
+// ✅ 型の修正
+interface PageParams {
   params: {
     id: string;
   };
-};
+}
 
-export default async function AccommodationPage({ params }: Props) {
+export default async function AccommodationPage({ params }: PageParams) {
   const accommodationId = Number(params.id);
   if (isNaN(accommodationId)) return notFound();
 
@@ -82,28 +82,26 @@ export default async function AccommodationPage({ params }: Props) {
         <p className="text-sm text-gray-600 mb-4">{accommodation.locationJP}</p>
         <p className="text-lg font-bold mb-8">¥{accommodation.price}/泊</p>
 
-      
-          <h2 className="text-xl font-semibold mt-6 mb-2">レビュー</h2>
-          {accommodation.reviews.length > 0 ? (
-            accommodation.reviews.map((review) => (
-              <div key={review.id} className="mb-4 border-b pb-2">
-                <p>{review.content}</p>
-                <p>評価: {review.rating}</p>
-                <p>投稿者: {review.user.name}</p>
-                <LikeButton
-                  accommodationId={accommodation.id}
-                  isLiked={likedAccommodations.includes(accommodation.id)}
-                  initialCount={likesCountMap[accommodation.id] || 0}
-                />
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500">まだレビューがありません。</p>
-          )}
+        <h2 className="text-xl font-semibold mt-6 mb-2">レビュー</h2>
+        {accommodation.reviews.length > 0 ? (
+          accommodation.reviews.map((review) => (
+            <div key={review.id} className="mb-4 border-b pb-2">
+              <p>{review.content}</p>
+              <p>評価: {review.rating}</p>
+              <p>投稿者: {review.user.name}</p>
+              <LikeButton
+                accommodationId={accommodation.id}
+                isLiked={likedAccommodations.includes(accommodation.id)}
+                initialCount={likesCountMap[accommodation.id] || 0}
+              />
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500">まだレビューがありません。</p>
+        )}
 
-          <Reservation accommodation={accommodation} user={user} />
-          {session?.user && <ReviewForm accommodationId={accommodation.id} />}
-      
+        <Reservation accommodation={accommodation} user={user} />
+        {session?.user && <ReviewForm accommodationId={accommodation.id} />}
 
         <Link href="/" className="block mb-4 hover:underline mt-6 text-blue-600 text-center">
           トップへ戻る
