@@ -1,5 +1,4 @@
-// src/app/accommodation/[id]/page.tsx
-
+// ✅ 修正済み page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getSessionUser } from "@/app/utils/getSessionUser";
@@ -11,13 +10,7 @@ import LikeButton from "@/app/components/LikeButton";
 import SessionWrapper from "@/app/components/SessionWrapper";
 import Image from "next/image";
 
-interface AccommodationPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default async function AccommodationPage({ params }: AccommodationPageProps) {
+export default async function Page({ params }: { params: { id: string } }) {
   const sessionUser = await getSessionUser();
   const session = await getServerSession(authOptions);
 
