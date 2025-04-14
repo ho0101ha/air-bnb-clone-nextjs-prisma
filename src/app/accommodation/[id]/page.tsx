@@ -11,13 +11,13 @@ import LikeButton from "@/app/components/LikeButton";
 import SessionWrapper from "@/app/components/SessionWrapper";
 import Image from "next/image";
 
-type PageProps = {
+interface AccommodationPageProps {
   params: {
     id: string;
   };
-};
+}
 
-export default async function Page({ params }: PageProps) {
+export default async function AccommodationPage({ params }: AccommodationPageProps) {
   const sessionUser = await getSessionUser();
   const session = await getServerSession(authOptions);
 
