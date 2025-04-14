@@ -1,3 +1,5 @@
+// src/app/accommodation/[id]/page.tsx
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getSessionUser } from "@/app/utils/getSessionUser";
@@ -8,8 +10,19 @@ import ReviewForm from "@/app/components/ReviewForm";
 import LikeButton from "@/app/components/LikeButton";
 import SessionWrapper from "@/app/components/SessionWrapper";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
-export default async function Page({ params }: { params: { id: string } }) {
+// ✅ 型を明示して推論エラーを避ける
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function AccommodationPage({ params }: Props) {
+  const accommodationId = Number(params.id);
+  if (isNaN(accommodationId)) return notFound();
+
   const sessionUser = await getSessionUser();
   const session = await getServerSession(authOptions);
 
@@ -18,7 +31,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     : null;
 
   const accommodation = await prisma.accommodation.findUnique({
-    where: { id: Number(params.id) },
+    where: { id: accommodationId },
     include: {
       reservations: true,
       reviews: { include: { user: true } },
@@ -61,6 +74,7 @@ export default async function Page({ params }: { params: { id: string } }) {
               layout="fill"
               objectFit="cover"
               className="rounded-lg"
+              unoptimized
             />
           </div>
         )}
@@ -98,4 +112,3 @@ export default async function Page({ params }: { params: { id: string } }) {
     </main>
   );
 }
-
