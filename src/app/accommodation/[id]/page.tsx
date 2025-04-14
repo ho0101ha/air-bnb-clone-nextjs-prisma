@@ -1,4 +1,3 @@
-// ✅ 修正済み page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getSessionUser } from "@/app/utils/getSessionUser";
@@ -99,3 +98,4 @@ export default async function Page({ params }: { params: { id: string } }) {
     </main>
   );
 }
+
