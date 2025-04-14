@@ -8,11 +8,11 @@ import Link from "next/link";
 import Reservation from "@/app/components/Reservation";
 import ReviewForm from "@/app/components/ReviewForm";
 import LikeButton from "@/app/components/LikeButton";
-import SessionWrapper from "@/app/components/SessionWrapper";
+
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-// ✅ 型を明示して推論エラーを避ける
+
 type Props = {
   params: {
     id: string;
@@ -82,7 +82,7 @@ export default async function AccommodationPage({ params }: Props) {
         <p className="text-sm text-gray-600 mb-4">{accommodation.locationJP}</p>
         <p className="text-lg font-bold mb-8">¥{accommodation.price}/泊</p>
 
-        <SessionWrapper>
+      
           <h2 className="text-xl font-semibold mt-6 mb-2">レビュー</h2>
           {accommodation.reviews.length > 0 ? (
             accommodation.reviews.map((review) => (
@@ -103,7 +103,7 @@ export default async function AccommodationPage({ params }: Props) {
 
           <Reservation accommodation={accommodation} user={user} />
           {session?.user && <ReviewForm accommodationId={accommodation.id} />}
-        </SessionWrapper>
+      
 
         <Link href="/" className="block mb-4 hover:underline mt-6 text-blue-600 text-center">
           トップへ戻る
