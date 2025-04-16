@@ -12,14 +12,16 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 
-type AccommodationPageProps = {
+//  型の修正
+interface PageParams {
   params: {
     id: string;
   };
-};
+}
 
-export default async function AccommodationPage({
-  params}: AccommodationPageProps) {
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function AccommodationPage({ params }: any) {
   const accommodationId = Number(params.id);
   if (isNaN(accommodationId)) return notFound();
 
