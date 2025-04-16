@@ -70,11 +70,3 @@ export async function GET() {
   
 }
 
-export async function DELETE(id:number) {
-  const user =  await getSessionUser();
-  if(!user || user.role  !==  Role.ADMIN){
-    return NextResponse.json({error:"権限がありません"},{status:403});
-  }
-   prisma.user.delete({where:{id}});
-   return NextResponse.json
-}
