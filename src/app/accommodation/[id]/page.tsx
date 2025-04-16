@@ -13,11 +13,11 @@ import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 
 //  型の修正
-interface PageParams {
-  params: {
-    id: string;
-  };
-}
+// interface PageParams {
+//   params: {
+//     id: string;
+//   };
+// }
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
