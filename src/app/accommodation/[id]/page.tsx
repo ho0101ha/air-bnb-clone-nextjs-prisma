@@ -19,6 +19,8 @@ import { notFound } from "next/navigation";
 //   };
 // }
 
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function AccommodationPage({ params }: any) {
   const accommodationId = Number(params.id);
   if (isNaN(accommodationId)) return notFound();
