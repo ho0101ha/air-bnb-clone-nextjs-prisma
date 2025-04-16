@@ -1,17 +1,16 @@
-"use client";
-
+import { Suspense } from "react";
+import SuccessClient from "./SuccessClient";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+
 
 export default function SuccessPage() {
-  const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold">支払いが完了しました！</h1>
-      <p>予約が確定しました。ありがとうございました！</p>
-      <p>ID:{sessionId}</p>
-      <Link href="/" className="mt-4 text-blue-500">ホームに戻る</Link>
-    </div>
+    <main className="p-8 text-center">
+      <h1 className="text-2xl font-bold mb-4">支払い完了！</h1>
+      <Suspense fallback={<p>読み込み中...</p>}>
+        <SuccessClient />
+      </Suspense>
+      <Link href={"/"} className="mt-5 text-center">トップへ戻る</Link>
+    </main>
   );
 }
