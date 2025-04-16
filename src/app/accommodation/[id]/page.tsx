@@ -12,14 +12,14 @@ import LikeButton from "@/app/components/LikeButton";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-// ✅ 型の修正
-interface PageParams {
-  params: {
-    id: string;
-  };
-}
+// //  型の修正
+// interface PageParams {
+//   params: {
+//     id: string;
+//   };
+// }
 
-export default async function AccommodationPage({ params }: PageParams) {
+export default async function AccommodationPage({ params }: any) {
   const accommodationId = Number(params.id);
   if (isNaN(accommodationId)) return notFound();
 
