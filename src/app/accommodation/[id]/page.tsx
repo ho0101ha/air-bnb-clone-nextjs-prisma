@@ -1,7 +1,6 @@
 // src/app/accommodation/[id]/page.tsx
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getSessionUser } from "@/app/utils/getSessionUser";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
@@ -11,8 +10,9 @@ import LikeButton from "@/app/components/LikeButton";
 
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { authOptions } from "@/lib/auth";
 
-// //  型の修正
+//  型の修正
 // interface PageParams {
 //   params: {
 //     id: string;
@@ -21,7 +21,11 @@ import { notFound } from "next/navigation";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function AccommodationPage({ params }: any) {
+export default async function AccommodationPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const accommodationId = Number(params.id);
   if (isNaN(accommodationId)) return notFound();
 
