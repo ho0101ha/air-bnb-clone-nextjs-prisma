@@ -1,8 +1,9 @@
 import React from "react";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 import { PrismaClient } from "@prisma/client";
 import Link from "next/link";
+import { authOptions } from "@/lib/auth";
 const prisma = new PrismaClient();
 export default async function Messages() {
    

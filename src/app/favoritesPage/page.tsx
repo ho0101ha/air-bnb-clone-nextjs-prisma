@@ -1,8 +1,9 @@
 import { getServerSession } from 'next-auth'
 import React from 'react'
-import { authOptions } from '../api/auth/[...nextauth]/route'
+
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 
 
 export default  async function FavoritesPage() {

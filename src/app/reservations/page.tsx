@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import { getServerSession } from 'next-auth';
 import React from 'react'
-import { authOptions } from '../api/auth/[...nextauth]/route';
+
 import Link from 'next/link';
 import ClientReservations from '../components/ClientReservations';
+import { authOptions } from '@/lib/auth';
 const prisma = new PrismaClient();
 
 export  default async function ReservationsPage() {

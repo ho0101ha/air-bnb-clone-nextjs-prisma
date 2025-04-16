@@ -2,13 +2,14 @@ import { PrismaClient } from '@prisma/client';
 // import Link from 'next/link';
 import AccommodationList from './components/AccommodationList';
 import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]/route';
+
 import UserMenue from './components/UserMenue';
 // import { signIn, signOut } from 'next-auth/react';
 import LoginLogoutButton from './components/LoginLogoutButton';
 import HostRequestButton from './components/HostRequestButton';
 import { getSessionUser } from './utils/getSessionUser';
 import SessionWrapper from './components/SessionWrapper';
+import { authOptions } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
