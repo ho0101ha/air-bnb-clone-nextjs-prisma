@@ -1,4 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+
+import { prisma } from '@/lib/prisma';
+
 // import Link from 'next/link';
 import AccommodationList from './components/AccommodationList';
 import { getServerSession } from 'next-auth';
@@ -11,7 +13,7 @@ import { getSessionUser } from './utils/getSessionUser';
 import SessionWrapper from './components/SessionWrapper';
 import { authOptions } from '@/lib/auth';
 
-const prisma = new PrismaClient();
+
 
 
 export default async function Page() {
