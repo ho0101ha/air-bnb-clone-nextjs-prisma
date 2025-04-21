@@ -1,3 +1,4 @@
+// app/page.tsx
 import { prisma } from '@/lib/prisma';
 import AccommodationList from './components/AccommodationList';
 import { getServerSession } from 'next-auth';
@@ -7,10 +8,16 @@ import HostRequestButton from './components/HostRequestButton';
 import { getSessionUser } from './utils/getSessionUser';
 import SessionWrapper from './components/SessionWrapper';
 import { authOptions } from '@/lib/auth';
+import { Accommodation, Property, User } from '@prisma/client';
+
+type AccommodationWithPropertyAndOwner = Accommodation & {
+  property: (Property & {
+    owner: User | null;
+  }) | null;
+};
 
 export default async function Page() {
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let accommodations: any[] = [];
+  let accommodations: AccommodationWithPropertyAndOwner[] = [];
   try {
     accommodations = await prisma.accommodation.findMany({
       include: {
@@ -31,7 +38,7 @@ export default async function Page() {
   let likedAccommodations: number[] = [];
   const likesCountMap: Record<number, number> = {};
   let initialFollowedUsers: number[] = [];
-  const followersCountMap: Record<number, number> = [];
+  const followersCountMap: Record<number, number> = {};
   let favoriteIds: number[] = [];
 
   if (session?.user?.email) {
@@ -105,8 +112,7 @@ export default async function Page() {
         <div>
           <SessionWrapper>
             <AccommodationList
-             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              accommodations={accommodations.map((a: any) => ({
+              accommodations={accommodations.map((a) => ({
                 ...a,
                 ownerId: a.property?.owner?.id ?? 0,
               }))}
