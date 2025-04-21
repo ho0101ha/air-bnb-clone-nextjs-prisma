@@ -9,6 +9,7 @@ import SessionWrapper from './components/SessionWrapper';
 import { authOptions } from '@/lib/auth';
 
 export default async function Page() {
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let accommodations: any[] = [];
   try {
     accommodations = await prisma.accommodation.findMany({
@@ -104,6 +105,7 @@ export default async function Page() {
         <div>
           <SessionWrapper>
             <AccommodationList
+             // eslint-disable-next-line @typescript-eslint/no-explicit-any
               accommodations={accommodations.map((a: any) => ({
                 ...a,
                 ownerId: a.property?.owner?.id ?? 0,
