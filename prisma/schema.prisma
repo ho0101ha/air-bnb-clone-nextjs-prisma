@@ -1,11 +1,36 @@
+
+//本願用
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  // directUrl = env("DATABASE_URL_NON_POOLING")
 }
+
+
+// schema.prisma
+// datasource db {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL") 
+// }
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "sqlite"
+//   url      = env("DATABASE_URL")
+// }
 // datasource db {
 //   provider = "postgresql"
 //   url      = env("DATABASE_URL")
