@@ -180,171 +180,84 @@ export default function HostPage() {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 lg:p-10 max-w-screen-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">ホスト管理ページ</h1>
-
+  
       {/* 宿泊施設一覧 */}
       <h2 className="text-xl font-semibold mt-6 mb-2">宿泊施設一覧</h2>
-      <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {accommodations.map((acc) => (
           <div key={acc.id} className="border p-4 rounded-lg shadow-md">
             {editingAccommodation?.id === acc.id ? (
               <>
-                <input
-                  type="text"
-                  value={editingAccommodation.name}
-                  onChange={(e) => setEditingAccommodation({ ...editingAccommodation, name: e.target.value })}
-                  className="border p-2 w-full"
-                />
-                <input
-                  type="text"
-                  value={editingAccommodation.description}
-                  onChange={(e) => setEditingAccommodation({ ...editingAccommodation, description: e.target.value })}
-                  className="border p-2 w-full"
-                />
-                <input
-                  type="text"
-                  value={editingAccommodation.locationJP}
-                  onChange={(e) => setEditingAccommodation({ ...editingAccommodation, locationJP: e.target.value })}
-                  className="border p-2 w-full"
-                />
-                <input
-                  type="text"
-                  value={editingAccommodation.imageUrl}
-                  onChange={(e) => setEditingAccommodation({ ...editingAccommodation, imageUrl: e.target.value })}
-                  className="border p-2 w-full"
-                />
-                <input
-                  type="number"
-                  value={editingAccommodation.price}
-                  onChange={(e) => setEditingAccommodation({ ...editingAccommodation, price: Number(e.target.value) })}
-                  className="border p-2 w-full"
-                />
-                <button onClick={handleSaveAccommodation} className="mt-2 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                  保存
-                </button>
-                
+                <input type="text" value={editingAccommodation.name} onChange={(e) => setEditingAccommodation({ ...editingAccommodation, name: e.target.value })} className="border p-2 w-full mb-2" />
+                <input type="text" value={editingAccommodation.description} onChange={(e) => setEditingAccommodation({ ...editingAccommodation, description: e.target.value })} className="border p-2 w-full mb-2" />
+                <input type="text" value={editingAccommodation.locationJP} onChange={(e) => setEditingAccommodation({ ...editingAccommodation, locationJP: e.target.value })} className="border p-2 w-full mb-2" />
+                <input type="text" value={editingAccommodation.imageUrl} onChange={(e) => setEditingAccommodation({ ...editingAccommodation, imageUrl: e.target.value })} className="border p-2 w-full mb-2" />
+                <input type="number" value={editingAccommodation.price} onChange={(e) => setEditingAccommodation({ ...editingAccommodation, price: Number(e.target.value) })} className="border p-2 w-full mb-2" />
+                <button onClick={handleSaveAccommodation} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">保存</button>
               </>
             ) : (
-              <div >
-                <h3 className="text-lg font-semibold pb-3">{acc.name}</h3>
+              <div>
+                <h3 className="text-lg font-semibold pb-2">{acc.name}</h3>
                 <p className="pb-2">{acc.description}</p>
                 <p className="pb-2">所在地: {acc.locationJP}</p>
-                <img src={acc.imageUrl} alt={acc.name} className="w-40 h-40 object-cover rounded-md mt-2 mb-2" />
+                <img src={acc.imageUrl} alt={acc.name} className="w-full h-40 object-cover rounded-md mb-2" />
                 <p className="pb-2">価格: ¥{acc.price.toLocaleString()}</p>
-                <button onClick={() => setEditingAccommodation(acc)} className="mt-2 bg-green-500 text-white px-3 py-1 rounded hover:opacity-50">
-                  編集
-                </button>
-                <button onClick={() => handleDelete(acc.id, "accommodation")} className="ml-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                  削除
-                </button>
+                <div className="flex gap-2">
+                  <button onClick={() => setEditingAccommodation(acc)} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">編集</button>
+                  <button onClick={() => handleDelete(acc.id, "accommodation")} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">削除</button>
+                </div>
               </div>
             )}
           </div>
         ))}
       </div>
-
+  
       {/* 予約一覧 */}
-      <h2 className="text-xl font-semibold mt-6 mb-2">予約一覧</h2>
-      <div className="space-y-4 flex gap-3">
+      <h2 className="text-xl font-semibold mt-10 mb-2">予約一覧</h2>
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {reservations.map((res) => (
           <div key={res.id} className="border p-4 rounded-lg shadow-md">
             {editingReservation?.id === res.id ? (
               <>
-                <input
-                  type="number"
-                  value={editingReservation.people}
-                  onChange={(e) => setEditingReservation({ ...editingReservation, people: Number(e.target.value) })}
-                  className="border p-2 w-full"
-                />
-                <input
-                  type="date"
-                  value={editingReservation.startDate}
-                  onChange={(e) => setEditingReservation({ ...editingReservation, startDate: e.target.value })}
-                  className="border p-2 w-full"
-                />
-                <input
-                  type="date"
-                  value={editingReservation.endDate}
-                  onChange={(e) => setEditingReservation({ ...editingReservation, endDate: e.target.value })}
-                  className="border p-2 w-full"
-                />
-                <button onClick={handleSaveReservation} className="mt-2 bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                  保存
-                </button>
+                <input type="number" value={editingReservation.people} onChange={(e) => setEditingReservation({ ...editingReservation, people: Number(e.target.value) })} className="border p-2 w-full mb-2" />
+                <input type="date" value={editingReservation.startDate} onChange={(e) => setEditingReservation({ ...editingReservation, startDate: e.target.value })} className="border p-2 w-full mb-2" />
+                <input type="date" value={editingReservation.endDate} onChange={(e) => setEditingReservation({ ...editingReservation, endDate: e.target.value })} className="border p-2 w-full mb-2" />
+                <button onClick={handleSaveReservation} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">保存</button>
               </>
             ) : (
               <>
-              <h3>宿泊施設ID:{res.accommodationId}</h3>
-                <h4 className="text-lg font-semibold">予約者: {res.name}</h4>
-                <p>人数: {res.people}人</p>
-                <p>チェックイン: {res.startDate}</p>
-                <p>チェックアウト: {res.endDate}</p>
-                <button onClick={() => setEditingReservation(res)} className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-                  編集
-                </button>
-                <button onClick={() => handleDelete(res.id, "reservation")} className="ml-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                  削除
-                </button>
+                <h3 className="text-md font-semibold">宿泊施設ID: {res.accommodationId}</h3>
+                <p className="pb-1">予約者: {res.name}</p>
+                <p className="pb-1">人数: {res.people}人</p>
+                <p className="pb-1">チェックイン: {res.startDate}</p>
+                <p className="pb-2">チェックアウト: {res.endDate}</p>
+                <div className="flex gap-2">
+                  <button onClick={() => setEditingReservation(res)} className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">編集</button>
+                  <button onClick={() => handleDelete(res.id, "reservation")} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">削除</button>
+                </div>
               </>
             )}
           </div>
         ))}
       </div>
-      <div>
-        <h2>新規宿泊施設登録</h2>
-        <div>
-            <input type="text" 
-            placeholder="宿泊施設名"
-            value={newAccommodation.name}
-            onChange={(e) => setNewAccommodation({
-              ...newAccommodation,name:e.target.value
-            })} 
-            className="text-lg font-semibold mt-2"/>
-              <input type="text" 
-              placeholder="説明"
-              value={newAccommodation.description}
-            onChange={(e) => setNewAccommodation({
-              ...newAccommodation,description:e.target.value
-            })} 
-            className="text-lg font-semibold mt-2"/>
-                 <input type="text" 
-                 placeholder="都市名"
-                 value={newAccommodation.locationJP}
-            onChange={(e) => setNewAccommodation({
-              ...newAccommodation,locationJP:e.target.value
-            })} 
-            className="text-lg font-semibold mt-2"/>
-            <input
-  type="file"
-  accept="image/*"
-  onChange={(e) => {
-    const file = e.target.files?.[0] || null;
-    setSelectedImage(file);
-  }}
-  className="text-lg font-semibold mt-2"
-/>
-
-                 {/* <input
-          type="text"
-          placeholder="画像URL"
-          value={newAccommodation.imageUrl}
-          onChange={(e) => setNewAccommodation({ ...newAccommodation, imageUrl: e.target.value })}
-          className="text-lg font-semibold mt-2"
-        /> */}
-                    <input type="number" 
-                    placeholder="値段"
-                    value={newAccommodation.price}
-            onChange={(e) => setNewAccommodation({
-              ...newAccommodation,price:Number(e.target.value)
-            })} />
-         
-         <h3 className="text-lg font-semibold mt-2">所有者情報</h3>
-        <input type="text" placeholder="所有者名" value={newAccommodation.property.name} onChange={(e) => setNewAccommodation({ ...newAccommodation, property: { ...newAccommodation.property, name: e.target.value } })} className="border p-2 w-full mb-2" />
-        <input type="text" placeholder="所有者所在地" value={newAccommodation.property.location} onChange={(e) => setNewAccommodation({ ...newAccommodation, property: { ...newAccommodation.property, location: e.target.value } })} className="border p-2 w-full mb-2" />
-         <button onClick={handleAddAccommodation}>宿泊施設を追加</button>
+  
+      {/* 新規宿泊施設登録 */}
+      <div className="mt-10 border p-4 rounded-lg max-w-xl w-full mx-auto">
+        <h2 className="text-xl font-semibold mb-4">新規宿泊施設登録</h2>
+        <div className="flex flex-col space-y-3">
+          <input type="text" placeholder="宿泊施設名" value={newAccommodation.name} onChange={(e) => setNewAccommodation({ ...newAccommodation, name: e.target.value })} className="border p-2 rounded w-full" />
+          <input type="text" placeholder="説明" value={newAccommodation.description} onChange={(e) => setNewAccommodation({ ...newAccommodation, description: e.target.value })} className="border p-2 rounded w-full" />
+          <input type="text" placeholder="都市名" value={newAccommodation.locationJP} onChange={(e) => setNewAccommodation({ ...newAccommodation, locationJP: e.target.value })} className="border p-2 rounded w-full" />
+          <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0] || null; setSelectedImage(file); }} className="w-full" />
+          <input type="number" placeholder="値段" value={newAccommodation.price} onChange={(e) => setNewAccommodation({ ...newAccommodation, price: Number(e.target.value) })} className="border p-2 rounded w-full" />
+          <h3 className="text-md font-semibold">所有者情報</h3>
+          <input type="text" placeholder="所有者名" value={newAccommodation.property.name} onChange={(e) => setNewAccommodation({ ...newAccommodation, property: { ...newAccommodation.property, name: e.target.value } })} className="border p-2 rounded w-full" />
+          <input type="text" placeholder="所有者所在地" value={newAccommodation.property.location} onChange={(e) => setNewAccommodation({ ...newAccommodation, property: { ...newAccommodation.property, location: e.target.value } })} className="border p-2 rounded w-full" />
+          <button onClick={handleAddAccommodation} className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">宿泊施設を追加</button>
         </div>
       </div>
     </div>
   );
-}
+}  

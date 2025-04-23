@@ -125,7 +125,7 @@ export default function AccommodationList({
       <h2 className="text-lg font-semibold mb-7 text-center">
         様々なシーンの宿泊施設を演出します。
       </h2>
-      <div className="flex justify-between">
+      <div className="flex justify-between flex-col gap-4 md:flex-row">
       <ul className="list-none p-0 flex justify-center">
         {filters.map((filter) => (
           <li
@@ -151,7 +151,7 @@ export default function AccommodationList({
         <form className="flex"
          onSubmit={(e) => {
           e.preventDefault();
-          setSelectedFilter(searchText); // 検索語句をフィルターとして設定
+          setSelectedFilter(searchText); 
         }}>
         <input type="text" value={searchText} onChange={(e) => setSearchText(e.target.value)}
         className=" block rounded-sm  bg-gray-200"/>

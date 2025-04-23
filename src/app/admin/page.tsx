@@ -51,7 +51,7 @@ export default async function AdminPage() {
       reservations={reservations}
       hostRequests={hostRequests} 
     />
-    <Link href="/">戻る</Link>
+    <Link href="/" className="block text-center mb-5 text-l hover:underline">戻る</Link>
     </>
   
     

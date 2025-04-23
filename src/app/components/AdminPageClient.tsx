@@ -86,10 +86,7 @@ export default function AdminPageClient({ users, accommodations, reservations,ho
   const handleUpdateReservation = async (id: number, startDate: string, endDate: string) => {
     setLoading(true);
     try {
-      // 送信するデータを確認
-      // console.log("Updating reservation:", { id, startDate, endDate });
-
-      // 日付をISO形式に変換zw
+      
       const updatedStartDate = new Date(startDate).toISOString();
       const updatedEndDate = new Date(endDate).toISOString();
 
@@ -119,170 +116,183 @@ export default function AdminPageClient({ users, accommodations, reservations,ho
     }
   };
   return (
-    <div className="p-5">
-      <h1 className="text-xl font-bold">管理者ページ</h1>
-
+    <div className="p-4 sm:p-6 max-w-screen-xl mx-auto">
+      <h1 className="text-xl sm:text-2xl font-bold">管理者ページ</h1>
+  
+      {/* HOST申請管理 */}
+      <section className="mt-6">
+        <h2 className="text-lg sm:text-xl font-bold mb-2">HOST 申請管理</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-300 text-sm sm:text-base">
+            <thead>
+              <tr>
+                <th className="border p-2">ユーザー名</th>
+                <th className="border p-2">メール</th>
+                <th className="border p-2">ステータス</th>
+                <th className="border p-2">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {hostRequests.map((req) => (
+                <tr key={req.id}>
+                  <td className="p-2 border">{req.user.name}</td>
+                  <td className="p-2 border">{req.user.email}</td>
+                  <td className="p-2 border">{req.status}</td>
+                  <td className="p-2 border">
+                    {req.status === "PENDING" && (
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleHostRequest(req.id, req.userId, true)}
+                          className="bg-green-500 text-white px-2 py-1 rounded text-sm"
+                        >
+                          承認
+                        </button>
+                        <button
+                          onClick={() => handleHostRequest(req.id, req.userId, false)}
+                          className="bg-red-500 text-white px-2 py-1 rounded text-sm"
+                        >
+                          却下
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+  
       {/* ユーザー管理 */}
       <section className="mt-6">
-    <h2 className="text-lg font-bold">HOST 申請管理</h2>
-    <table className="w-full border-collapse border border-gray-300 mt-2">
-    <thead>
-      <tr>
-        <th className="border p-2">ユーザー名</th>
-        <th className="border p-2">メール</th>
-        <th className="border p-2">ステータス</th>
-        <th className="border p-2">操作</th>
-      </tr>
-    </thead>
-    <tbody>
-      {hostRequests.map((req) => (
-        <tr key={req.id}>
-          <td className="p-2">{req.user.name}</td>
-          <td className="p-2">{req.user.email}</td>
-          <td className="p-2">{req.status}</td>
-          <td className="p-2 flex gap-2">
-            {req.status === "PENDING" && (
-              <>
-                <button
-                  onClick={() => handleHostRequest(req.id, req.userId, true)}
-                  className="bg-green-500 text-white p-1 rounded"
-                >
-                  承認
-                </button>
-                <button
-                  onClick={() => handleHostRequest(req.id, req.userId, false)}
-                  className="bg-red-500 text-white p-1 rounded"
-                >
-                  却下
-                </button>
-              </>
-            )}
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</section>
-      <section className="mt-6">
-        <h2 className="text-lg font-bold">ユーザー管理</h2>
-        <table className="w-full border-collapse border border-gray-300 mt-2">
-          <thead>
-            <tr>
-              <th className="border p-2">名前</th>
-              <th className="border p-2">メール</th>
-              <th className="border p-2">役割</th>
-              <th className="border p-2">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td className="p-2">{user.name}</td>
-                <td className="p-2">{user.email}</td>
-                <td className="p-2">{user.role}</td>
-                <td className="p-2 flex gap-2">
-                  <button
-                    onClick={() => handleUpdateUserRole(user.id, user.role === "HOST" ? "USER" : "HOST")}
-                    disabled={loading}
-                    className="bg-blue-500 text-white p-1 rounded"
-                  >
-                    {user.role === "HOST" ? "USER に変更" : "HOST に変更"}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user.id, "user")}
-                    disabled={loading}
-                    className="bg-red-500 text-white p-1 rounded"
-                  >
-                    削除
-                  </button>
-                </td>
+        <h2 className="text-lg sm:text-xl font-bold mb-2">ユーザー管理</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-300 text-sm sm:text-base">
+            <thead>
+              <tr>
+                <th className="border p-2">名前</th>
+                <th className="border p-2">メール</th>
+                <th className="border p-2">役割</th>
+                <th className="border p-2">操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td className="p-2 border">{user.name}</td>
+                  <td className="p-2 border">{user.email}</td>
+                  <td className="p-2 border">{user.role}</td>
+                  <td className="p-2 border">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleUpdateUserRole(user.id, user.role === "HOST" ? "USER" : "HOST")}
+                        disabled={loading}
+                        className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
+                      >
+                        {user.role === "HOST" ? "USER に変更" : "HOST に変更"}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id, "user")}
+                        disabled={loading}
+                        className="bg-red-500 text-white px-2 py-1 rounded text-sm"
+                      >
+                        削除
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
-
+  
       {/* 宿泊先管理 */}
       <section className="mt-6">
-        <h2 className="text-lg font-bold">宿泊先管理</h2>
-        <table className="w-full border-collapse border border-gray-300 mt-2">
-          <thead>
-            <tr>
-              <th className="border p-2">宿泊先名</th>
-              <th className="border p-2">所在地</th>
-              <th className="border p-2">価格</th>
-              <th className="border p-2">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {accommodations.map((acc) => (
-              <tr key={acc.id}>
-                <td className="p-2">{acc.name}</td>
-                <td className="p-2">{acc.location}</td>
-                <td className="p-2">{acc.price}</td>
-                <td className="p-2">
-                  <button
-                    onClick={() => handleDelete(acc.id, "accommodation")}
-                    disabled={loading}
-                    className="bg-red-500 text-white p-1 rounded"
-                  >
-                    削除
-                  </button>
-                </td>
+        <h2 className="text-lg sm:text-xl font-bold mb-2">宿泊先管理</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-300 text-sm sm:text-base">
+            <thead>
+              <tr>
+                <th className="border p-2">宿泊先名</th>
+                <th className="border p-2">所在地</th>
+                <th className="border p-2">価格</th>
+                <th className="border p-2">操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {accommodations.map((acc) => (
+                <tr key={acc.id}>
+                  <td className="p-2 border">{acc.name}</td>
+                  <td className="p-2 border">{acc.location}</td>
+                  <td className="p-2 border">¥{acc.price.toLocaleString()}</td>
+                  <td className="p-2 border">
+                    <button
+                      onClick={() => handleDelete(acc.id, "accommodation")}
+                      disabled={loading}
+                      className="bg-red-500 text-white px-2 py-1 rounded text-sm"
+                    >
+                      削除
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
-
+  
       {/* 予約管理 */}
-      <section className="mt-6">
-        <h2 className="text-lg font-bold">予約管理</h2>
-        <table className="w-full border-collapse border border-gray-300 mt-2">
-          <thead>
-            <tr>
-              <th className="border p-2">ユーザー名</th>
-              <th className="border p-2">宿泊先名</th>
-              <th className="border p-2">チェックイン</th>
-              <th className="border p-2">チェックアウト</th>
-              <th className="border p-2">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservations.map((res) => (
-              <tr key={res.id}>
-                <td className="p-2">{res.name}</td>
-                <td className="p-2">{res.accommodation.name}</td>
-                <td className="p-2">
-                  <input
-                    type="date"
-                    value={res.startDate.split("T")[0]}
-                    onChange={(e) => handleUpdateReservation(res.id, e.target.value, res.endDate)}
-                    className="border p-1"
-                  />
-                </td>
-                <td className="p-2">
-                  <input
-                    type="date"
-                    value={res.endDate.split("T")[0]}
-                    onChange={(e) => handleUpdateReservation(res.id, res.startDate, e.target.value)}
-                    className="border p-1"
-                  />
-                </td>
-                <td className="p-2">
-                  <button
-                    onClick={() => handleDelete(res.id, "reservation")}
-                    disabled={loading}
-                    className="bg-red-500 text-white p-1 rounded"
-                  >
-                    削除
-                  </button>
-                </td>
+      <section className="mt-6 mb-10">
+        <h2 className="text-lg sm:text-xl font-bold mb-2">予約管理</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse border border-gray-300 text-sm sm:text-base">
+            <thead>
+              <tr>
+                <th className="border p-2">ユーザー名</th>
+                <th className="border p-2">宿泊先名</th>
+                <th className="border p-2">チェックイン</th>
+                <th className="border p-2">チェックアウト</th>
+                <th className="border p-2">操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {reservations.map((res) => (
+                <tr key={res.id}>
+                  <td className="p-2 border">{res.name}</td>
+                  <td className="p-2 border">{res.accommodation.name}</td>
+                  <td className="p-2 border">
+                    <input
+                      type="date"
+                      value={res.startDate.split("T")[0]}
+                      onChange={(e) => handleUpdateReservation(res.id, e.target.value, res.endDate)}
+                      className="border p-1 rounded"
+                    />
+                  </td>
+                  <td className="p-2 border">
+                    <input
+                      type="date"
+                      value={res.endDate.split("T")[0]}
+                      onChange={(e) => handleUpdateReservation(res.id, res.startDate, e.target.value)}
+                      className="border p-1 rounded"
+                    />
+                  </td>
+                  <td className="p-2 border">
+                    <button
+                      onClick={() => handleDelete(res.id, "reservation")}
+                      disabled={loading}
+                      className="bg-red-500 text-white px-2 py-1 rounded text-sm"
+                    >
+                      削除
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   );
+  
 }
