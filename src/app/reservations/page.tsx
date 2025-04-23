@@ -28,7 +28,7 @@ export  default async function ReservationsPage() {
 
   return (
     <div>
-      <h1 className='text-center my-5 text-xl'>予約リスト</h1>
+      <h1 className='text-center my-10 text-xl'>予約リスト</h1>
   
         <ClientReservations reservations={formattedReservations} />
         <Link href={"/"} className='block text-center hover:underline'>トップへ戻る</Link>

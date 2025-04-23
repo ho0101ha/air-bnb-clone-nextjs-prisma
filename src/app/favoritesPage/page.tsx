@@ -12,8 +12,8 @@ export default  async function FavoritesPage() {
         return(
         <div>
          <div>
-            <h2>お気に入りを見るにはログインが必要です</h2>
-            <Link href={"/login"}></Link>
+            <h2 className='text-center mt-10'>お気に入りを見るにはログインが必要です</h2>
+            <Link href={"/login"} className='mt-4 text-center block'>ログイン</Link>
          </div>
         </div>)
        
@@ -28,7 +28,7 @@ export default  async function FavoritesPage() {
       <h1 className='text-center py-10 text-2xl font-bold'>お気に入りの宿泊地</h1>
       {favoriteAccommodations.length === 0? 
       <div>
-        <p className='text-center py-5'>お気に入りのページがありません</p>     
+        <p className='text-center py-5 mb-5'>お気に入りのページがありません</p>     
         </div> :(
         <div className={`${favoriteAccommodations.length ===1 ? "flex justify-center" :"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}  w-full  mb-5`} >
             {favoriteAccommodations.map((favorite) =>(
